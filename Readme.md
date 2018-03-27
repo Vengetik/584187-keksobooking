@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Никитос Кисель](https://up.htmlacademy.ru/javascript/13/user/584187).
-* Наставник: `Неизвестно`.
+* Сенсей и Предводитель: [Сергей Буртылёв](https://htmlacademy.ru/profile/id3341).
 
 ---
 
