@@ -80,18 +80,20 @@ var createOffers = function () {
 };
 
 // create pin
-var renderPin = function (offers, i) {
+var renderPin = function (offer) {
   var pin = pinTemplate.cloneNode(true);
-  pin.style.left = offers[i].location.x - PIN_HALF_WIDTH;
-  pin.style.top = offers[i].location.y - PIN_HEIGHT;
-  pin.querySelector('img').src = offers[i].author.avatar;
-  pin.querySelector('img').alt = offers[i].offer.title;
+  pin.style.left = offer.location.x - PIN_HALF_WIDTH + 'px';
+  pin.style.top = offer.location.y - PIN_HEIGHT + 'px';
+  pin.querySelector('img').src = offer.author.avatar;
+  pin.querySelector('img').alt = offer.offer.title;
   return pin;
 };
 // render pin on map
-
-for (var i = 0; i < createOffers.length; i++) {
-  fragment.appendChild(renderPin(createOffers, i));
+var offers = createOffers();
+for (var i = 0; i < offers.length; i++) {
+  var pin = renderPin(offers[i]);
+  fragment.appendChild(pin);
 }
 mapPin.appendChild(fragment);
+
 
