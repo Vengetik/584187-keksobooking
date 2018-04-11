@@ -25,6 +25,7 @@ var fragmentCard = document.createDocumentFragment();
 //  Removed map faded
 var mapBlock = document.querySelector('.map');
 mapBlock.classList.remove('map--faded');
+var beforeCardBlock = document.querySelector('.map__filters-container');
 
 // Pin variables
 var PIN_HALF_WIDTH = 32;
@@ -96,6 +97,7 @@ for (var i = 0; i < offers.length; i++) {
   fragment.appendChild(pin);
 }
 mapPin.appendChild(fragment);
+debugger
 var createCard = function (offerCard) {
   var card = cardTemplate.cloneNode(true);
   var russianType;
@@ -117,18 +119,17 @@ var createCard = function (offerCard) {
   card.querySelector('.popup__text--time').textContent = 'Заезд после ' + offerCard.offer.checkin + ', выезд до ' + offerCard.offer.checkout;
 
   for (var j = 0; j < offerCard.offer.features.length; j++) {
-    var newElement = card.createElement('li');
+    var newElement = document.createElement('li');
     newElement.classList.add('popup__feature', 'popup__feature--' + offerCard.offer.features[j]);
     featuresList.appendChild(newElement);
   }
 
-  card.querySelector('.popup_description').textContent = offerCard.offer.description;
+  card.querySelector('.popup__description').textContent = offerCard.offer.description;
   card.querySelector('.popup__photos > img').src = offerCard.offer.photos;
   card.querySelector('.popup__avatar').src = offerCard.author.avatar;
   return card;
 };
 
-var card = createCard(offers[i]);
+var card = createCard(offers[3]);
 fragmentCard.appendChild(card);
-mapPin.insertBefore(fragmentCard, '.map__filters-container');
-console.log(createCard());
+mapBlock.insertBefore(fragmentCard, mapBlock.children[3]);
