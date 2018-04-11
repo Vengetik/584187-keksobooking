@@ -25,7 +25,6 @@ var fragmentCard = document.createDocumentFragment();
 //  Removed map faded
 var mapBlock = document.querySelector('.map');
 mapBlock.classList.remove('map--faded');
-var beforeCardBlock = document.querySelector('.map__filters-container');
 
 // Pin variables
 var PIN_HALF_WIDTH = 32;
@@ -35,6 +34,7 @@ var pinTemplate = document.querySelector('template').content.querySelector('butt
 
 // card variables
 var cardTemplate = document.querySelector('template').content.querySelector('article.map__card');
+
 // optimization func
 var shuffleArray = function (someArray) {
   return someArray.sort(function () {
@@ -92,12 +92,14 @@ var createPin = function (offerPin) {
 };
 // render pin on map
 var offers = createOffers();
-for (var i = 0; i < offers.length; i++) {
-  var pin = createPin(offers[i]);
-  fragment.appendChild(pin);
-}
-mapPin.appendChild(fragment);
-debugger
+var renderPins = function () {
+  for (var i = 0; i < offers.length; i++) {
+    var pin = createPin(offers[i]);
+    fragment.appendChild(pin);
+  }
+  mapPin.appendChild(fragment);
+};
+
 var createCard = function (offerCard) {
   var card = cardTemplate.cloneNode(true);
   var russianType;
@@ -117,11 +119,12 @@ var createCard = function (offerCard) {
   card.querySelector('.popup__type').textContent = russianType;
   card.querySelector('.popup__text--capacity').textContent = offerCard.offer.rooms + 'комнаты для ' + offerCard.offer.guests + 'гостей';
   card.querySelector('.popup__text--time').textContent = 'Заезд после ' + offerCard.offer.checkin + ', выезд до ' + offerCard.offer.checkout;
-
+  featuresList.innerHTML = '';
   for (var j = 0; j < offerCard.offer.features.length; j++) {
     var newElement = document.createElement('li');
     newElement.classList.add('popup__feature', 'popup__feature--' + offerCard.offer.features[j]);
     featuresList.appendChild(newElement);
+
   }
 
   card.querySelector('.popup__description').textContent = offerCard.offer.description;
@@ -129,7 +132,10 @@ var createCard = function (offerCard) {
   card.querySelector('.popup__avatar').src = offerCard.author.avatar;
   return card;
 };
-
-var card = createCard(offers[3]);
-fragmentCard.appendChild(card);
-mapBlock.insertBefore(fragmentCard, mapBlock.children[3]);
+var renderCard = function () {
+  var card = createCard(offers[3]);
+  fragmentCard.appendChild(card);
+  mapBlock.insertBefore(fragmentCard, mapBlock.children[3]);
+};
+renderCard();
+renderPins();
