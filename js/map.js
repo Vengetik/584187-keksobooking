@@ -92,9 +92,9 @@ var createPin = function (offerPin) {
 };
 // render pin on map
 var offers = createOffers();
-var renderPins = function () {
-  for (var i = 0; i < offers.length; i++) {
-    var pin = createPin(offers[i]);
+var renderPins = function (pinOffers) {
+  for (var i = 0; i < pinOffers.length; i++) {
+    var pin = createPin(pinOffers[i]);
     fragment.appendChild(pin);
   }
   mapPin.appendChild(fragment);
@@ -104,6 +104,9 @@ var createCard = function (offerCard) {
   var card = cardTemplate.cloneNode(true);
   var russianType;
   var featuresList = card.querySelector('.popup__features');
+  var cardImgBlock = card.querySelector('.popup__photos');
+  var cardImg = card.querySelector('.popup__photo');
+  cardImgBlock.removeChild(cardImg);
   if (offerCard.offer.type === 'flat') {
     russianType = 'Квартира';
   } else if (offerCard.offer.type === 'bungalo') {
@@ -124,18 +127,26 @@ var createCard = function (offerCard) {
     var newElement = document.createElement('li');
     newElement.classList.add('popup__feature', 'popup__feature--' + offerCard.offer.features[j]);
     featuresList.appendChild(newElement);
-
   }
-
   card.querySelector('.popup__description').textContent = offerCard.offer.description;
-  card.querySelector('.popup__photos > img').src = offerCard.offer.photos;
+  for (var i = 0; i < offerCard.offer.photos.length; i++) {
+    var hotelImage = document.createElement('img');
+    hotelImage.src = offerCard.offer.photos[i];
+    hotelImage.classList.add('popup__photo');
+    hotelImage.width = '45';
+    hotelImage.height = '40';
+    hotelImage.alt = 'Фотография жилья';
+    cardImgBlock.appendChild(hotelImage);
+  }
   card.querySelector('.popup__avatar').src = offerCard.author.avatar;
+
   return card;
 };
-var renderCard = function () {
-  var card = createCard(offers[3]);
+var renderCard = function (cardOffer) {
+  var card = createCard(cardOffer);
   fragmentCard.appendChild(card);
   mapBlock.insertBefore(fragmentCard, mapBlock.children[3]);
 };
-renderCard();
-renderPins();
+renderCard(offers[3]);
+renderPins(offers);
+
