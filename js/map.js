@@ -13,7 +13,14 @@ var renderTitle = [
 ];
 var types = ['palace', 'flat', 'house', 'bungalo'];
 var check = ['12:00', '13:00', '14:00'];
-var features = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
+var features = [
+  'wifi',
+  'dishwasher',
+  'parking',
+  'washer',
+  'elevator',
+  'conditioner'
+];
 var renderPhotos = [
   'http://o0.github.io/assets/images/tokyo/hotel1.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
@@ -22,18 +29,20 @@ var renderPhotos = [
 // DOM variables
 var fragment = document.createDocumentFragment();
 var fragmentCard = document.createDocumentFragment();
-//  Removed map faded
 var mapBlock = document.querySelector('.map');
-mapBlock.classList.remove('map--faded');
+var adForm = document.querySelector('.ad-form');
+var mapPin = document.querySelector('.map__pins');
+var mainMapPin = document.querySelector('.map__pin--main');
 
 // Pin variables
 var PIN_HALF_WIDTH = 32;
 var PIN_HEIGHT = 86;
-var mapPin = document.querySelector('.map__pins');
-var pinTemplate = document.querySelector('template').content.querySelector('button.map__pin');
+var pinTemplate = document.querySelector('template')
+    .content.querySelector('button.map__pin');
 
 // card variables
-var cardTemplate = document.querySelector('template').content.querySelector('article.map__card');
+var cardTemplate = document.querySelector('template')
+    .content.querySelector('article.map__card');
 
 // optimization func
 var shuffleArray = function (someArray) {
@@ -147,6 +156,22 @@ var renderCard = function (cardOffer) {
   fragmentCard.appendChild(card);
   mapBlock.insertBefore(fragmentCard, mapBlock.children[3]);
 };
-renderCard(offers[3]);
-renderPins(offers);
 
+// Disable form elements
+var toggleForm = function (tagName, hide) {
+  var formFields = document.getElementsByTagName(tagName);
+  for (var i = 0; i < formFields.length; i++) {
+    formFields[i].disabled = hide;
+  }
+};
+toggleForm('fieldset', true);
+
+var activatePage = function () {
+  mapBlock.classList.remove('map--faded'); //  Removed map faded
+  adForm.classList.remove('ad-form--disabled'); // Remove blur from form
+  toggleForm('fieldset', false); // Activate form
+  renderCard(offers[3]);
+  renderPins(offers);
+};
+
+mainMapPin.addEventListener('mouseup', activatePage);
