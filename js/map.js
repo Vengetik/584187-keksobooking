@@ -31,12 +31,16 @@ var fragment = document.createDocumentFragment();
 var fragmentCard = document.createDocumentFragment();
 var mapBlock = document.querySelector('.map');
 var adForm = document.querySelector('.ad-form');
-var mapPin = document.querySelector('.map__pins');
+var mapPins = document.querySelector('.map__pins');
 var mainMapPin = document.querySelector('.map__pin--main');
 
 // Pin variables
 var PIN_HALF_WIDTH = 32;
 var PIN_HEIGHT = 86;
+var UNACTIVE_MAIN_PIN_WIDTH = 100;
+var UNACTIVE_MAIN_PIN_HEIGHT = 100;
+var ACTIVE_MAIN_PIN_WIDTH = 32;
+var ACTIVE_MAIN_PIN_HEIGHT = 87;
 var pinTemplate = document.querySelector('template')
     .content.querySelector('button.map__pin');
 
@@ -106,7 +110,7 @@ var renderPins = function (pinOffers) {
     var pin = createPin(pinOffers[i]);
     fragment.appendChild(pin);
   }
-  mapPin.appendChild(fragment);
+  mapPins.appendChild(fragment);
 };
 
 var createCard = function (offerCard) {
@@ -170,8 +174,23 @@ var activatePage = function () {
   mapBlock.classList.remove('map--faded'); //  Removed map faded
   adForm.classList.remove('ad-form--disabled'); // Remove blur from form
   toggleForm('fieldset', false); // Activate form
-  renderCard(offers[3]);
+  // ;
   renderPins(offers);
+  addressFormValue(ACTIVE_MAIN_PIN_WIDTH, ACTIVE_MAIN_PIN_HEIGHT);
 };
-
 mainMapPin.addEventListener('mouseup', activatePage);
+
+var addressFormValue = function (pinWidth, pinHeight) {
+  var x = parseInt(mainMapPin.style.left) - pinWidth;
+  var y = parseInt(mainMapPin.style.top) - pinHeight;
+  var value = x + ', ' + y;
+  document.forms[1].address.value = value;
+};
+addressFormValue(UNACTIVE_MAIN_PIN_WIDTH, UNACTIVE_MAIN_PIN_HEIGHT);
+
+var mapPin = document.querySelector('.map__pin:not(.map__pin--main)');
+document.addEventListener('DOMContentLoaded', function () {
+  mapPin.addEventListener('click', function () {
+    renderCard(offers[1]);
+  });
+});
