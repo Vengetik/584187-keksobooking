@@ -33,7 +33,6 @@ var mapBlock = document.querySelector('.map');
 var adForm = document.querySelector('.ad-form');
 var mapPins = document.querySelector('.map__pins');
 var mainMapPin = document.querySelector('.map__pin--main');
-
 // Pin variables
 var PIN_HALF_WIDTH = 32;
 var PIN_HEIGHT = 86;
@@ -170,27 +169,31 @@ var toggleForm = function (tagName, hide) {
 };
 toggleForm('fieldset', true);
 
+var callAds = function (selector) {
+  var mapPin = document.querySelectorAll(selector);
+  for (var i = 0; i < mapPin.length; i++) {
+    mapPin[i].addEventListener('click', function () {
+      renderCard(offers[1]);
+    });
+  }
+};
+console.log(callAds('.map__pin:not(.map__pin--main)'))
 var activatePage = function () {
   mapBlock.classList.remove('map--faded'); //  Removed map faded
   adForm.classList.remove('ad-form--disabled'); // Remove blur from form
   toggleForm('fieldset', false); // Activate form
-  // ;
   renderPins(offers);
-  addressFormValue(ACTIVE_MAIN_PIN_WIDTH, ACTIVE_MAIN_PIN_HEIGHT);
+  callAds('.map__pin:not(.map__pin--main)');
+  fillFormValue(ACTIVE_MAIN_PIN_WIDTH, ACTIVE_MAIN_PIN_HEIGHT);
 };
-mainMapPin.addEventListener('mouseup', activatePage);
 
-var addressFormValue = function (pinWidth, pinHeight) {
-  var x = parseInt(mainMapPin.style.left) - pinWidth;
-  var y = parseInt(mainMapPin.style.top) - pinHeight;
+
+var fillFormValue = function (pinWidth, pinHeight) {
+  var x = parseInt(mainMapPin.style.left, 10) - pinWidth;
+  var y = parseInt(mainMapPin.style.top, 10) - pinHeight;
   var value = x + ', ' + y;
   document.forms[1].address.value = value;
 };
-addressFormValue(UNACTIVE_MAIN_PIN_WIDTH, UNACTIVE_MAIN_PIN_HEIGHT);
+fillFormValue(UNACTIVE_MAIN_PIN_WIDTH, UNACTIVE_MAIN_PIN_HEIGHT);
 
-var mapPin = document.querySelector('.map__pin:not(.map__pin--main)');
-document.addEventListener('DOMContentLoaded', function () {
-  mapPin.addEventListener('click', function () {
-    renderCard(offers[1]);
-  });
-});
+mainMapPin.addEventListener('mouseup', activatePage);
