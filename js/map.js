@@ -177,7 +177,6 @@ var callAds = function (selector) {
     });
   }
 };
-console.log(callAds('.map__pin:not(.map__pin--main)'))
 var activatePage = function () {
   mapBlock.classList.remove('map--faded'); //  Removed map faded
   adForm.classList.remove('ad-form--disabled'); // Remove blur from form
