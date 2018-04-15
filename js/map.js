@@ -93,23 +93,26 @@ var createOffers = function () {
 };
 
 // create pin
-var createPin = function (offerPin) {
+var createPin = function (ad) {
   var pin = pinTemplate.cloneNode(true);
-  pin.style.left = offerPin.location.x - PIN_HALF_WIDTH + 'px';
-  pin.style.top = offerPin.location.y - PIN_HEIGHT + 'px';
-  pin.querySelector('img').src = offerPin.author.avatar;
-  pin.querySelector('img').alt = offerPin.offer.title;
-  pin.addEventListener('click', onPinClick);
-  pin.addEventListener('click', function () {
-    renderCard(offerPin);
-  });
+  pin.style.left = ad.location.x - PIN_HALF_WIDTH + 'px';
+  pin.style.top = ad.location.y - PIN_HEIGHT + 'px';
+  pin.querySelector('img').src = ad.author.avatar;
+  pin.querySelector('img').alt = ad.offer.title;
   return pin;
+};
+var setListenerToPin = function (pin, ad) {
+  pin.addEventListener('click', function () {
+    removeCard();
+    renderCard(ad);
+  });
 };
 // render pin on map
 var offers = createOffers();
-var renderPins = function (pinOffers) {
-  for (var i = 0; i < pinOffers.length; i++) {
-    var pin = createPin(pinOffers[i]);
+var renderPins = function (ad) {
+  for (var i = 0; i < ad.length; i++) {
+    var pin = createPin(ad[i]);
+    setListenerToPin(pin, ad[i]);
     fragment.appendChild(pin);
   }
   mapPins.appendChild(fragment);
@@ -167,23 +170,18 @@ var renderCard = function (cardOffer) {
 };
 
 // Close card cross listener
-var onCrossClick = function (evt) {
-  var cardElement = evt.target.closest('.map__card');
-  closeCard(cardElement);
+var onCrossClick = function () {
+  removeCard();
 };
 
 // Close card pin listener
-var onPinClick = function () {
+var removeCard = function () {
   var mapCardElement = mapBlock.querySelector('.map__card');
   if (mapCardElement) {
-    closeCard(mapCardElement);
+    mapCardElement.remove();
   }
 };
 
-// close card
-var closeCard = function (card) {
-  card.parentElement.removeChild(card);
-};
 // Disable form elements
 var toggleForm = function (tagName, hide) {
   var formFields = document.getElementsByTagName(tagName);
@@ -208,7 +206,8 @@ var activatePage = function () {
   fillFormValue(ACTIVE_MAIN_PIN_WIDTH, ACTIVE_MAIN_PIN_HEIGHT);
 };
 
-mainMapPin.addEventListener('mouseup', function () {
+mainMapPin.addEventListener('mouseup', function onMainPinDrag() {
   renderPins(offers);
   activatePage();
+  mainMapPin.removeEventListener('mouseup', onMainPinDrag);
 });
