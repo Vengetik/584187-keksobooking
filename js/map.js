@@ -28,7 +28,6 @@ var renderPhotos = [
 ];
 // DOM variables
 var fragment = document.createDocumentFragment();
-var fragmentCard = document.createDocumentFragment();
 var mapBlock = document.querySelector('.map');
 var adForm = document.querySelector('.ad-form');
 var mapPins = document.querySelector('.map__pins');
@@ -100,6 +99,10 @@ var createPin = function (offerPin) {
   pin.style.top = offerPin.location.y - PIN_HEIGHT + 'px';
   pin.querySelector('img').src = offerPin.author.avatar;
   pin.querySelector('img').alt = offerPin.offer.title;
+  pin.addEventListener('click', onPinClick);
+  pin.addEventListener('click', function () {
+    renderCard(offerPin);
+  });
   return pin;
 };
 // render pin on map
@@ -154,12 +157,33 @@ var createCard = function (offerCard) {
 
   return card;
 };
+
 var renderCard = function (cardOffer) {
   var card = createCard(cardOffer);
-  fragmentCard.appendChild(card);
-  mapBlock.insertBefore(fragmentCard, mapBlock.children[3]);
+  var popupCrossElement = card.querySelector('.popup__close');
+
+  popupCrossElement.addEventListener('click', onCrossClick);
+  mapBlock.insertBefore(card, mapBlock.children[3]);
 };
 
+// Close card cross listener
+var onCrossClick = function (evt) {
+  var cardElement = evt.target.closest('.map__card');
+  closeCard(cardElement);
+};
+
+// Close card pin listener
+var onPinClick = function () {
+  var mapCardElement = mapBlock.querySelector('.map__card');
+  if (mapCardElement) {
+    closeCard(mapCardElement);
+  }
+};
+
+// close card
+var closeCard = function (card) {
+  card.parentElement.removeChild(card);
+};
 // Disable form elements
 var toggleForm = function (tagName, hide) {
   var formFields = document.getElementsByTagName(tagName);
@@ -168,26 +192,6 @@ var toggleForm = function (tagName, hide) {
   }
 };
 toggleForm('fieldset', true);
-
-var callAds = function (selector) {
-  var mapPin = document.querySelectorAll(selector);
-  for (var i = 0; i < mapPin.length; i++) {
-    mapPin[i].addEventListener('click', function () {
-      renderCard(offers[1]);
-    });
-  }
-};
-
-var activatePage = function () {
-  mapBlock.classList.remove('map--faded'); //  Removed map faded
-  adForm.classList.remove('ad-form--disabled'); // Remove blur from form
-  toggleForm('fieldset', false); // Activate form
-  renderPins(offers);
-  callAds('.map__pin:not(.map__pin--main)');
-  fillFormValue(ACTIVE_MAIN_PIN_WIDTH, ACTIVE_MAIN_PIN_HEIGHT);
-};
-
-
 var fillFormValue = function (pinWidth, pinHeight) {
   var x = parseInt(mainMapPin.style.left, 10) - pinWidth;
   var y = parseInt(mainMapPin.style.top, 10) - pinHeight;
@@ -196,4 +200,15 @@ var fillFormValue = function (pinWidth, pinHeight) {
 };
 fillFormValue(UNACTIVE_MAIN_PIN_WIDTH, UNACTIVE_MAIN_PIN_HEIGHT);
 
-mainMapPin.addEventListener('mouseup', activatePage);
+
+var activatePage = function () {
+  mapBlock.classList.remove('map--faded'); //  Removed map faded
+  adForm.classList.remove('ad-form--disabled'); // Remove blur from form
+  toggleForm('fieldset', false); // Activate form
+  fillFormValue(ACTIVE_MAIN_PIN_WIDTH, ACTIVE_MAIN_PIN_HEIGHT);
+};
+
+mainMapPin.addEventListener('mouseup', function () {
+  renderPins(offers);
+  activatePage();
+});
