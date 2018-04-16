@@ -1,4 +1,9 @@
 'use strict';
+var MAIN_PIN_WIDTH = 65;
+var ACTIVE_MAIN_PIN_HEIGHT = 86;
+var MAIN_PIN_HALF_HEIGHT = 32;
+var PIN_HEIGHT = 70;
+var PIN_WIDTH = 50;
 // offer variables
 var avatar = [1, 2, 3, 4, 5, 6, 7, 8];
 var renderTitle = [
@@ -33,12 +38,7 @@ var adForm = document.querySelector('.ad-form');
 var mapPins = document.querySelector('.map__pins');
 var mainMapPin = document.querySelector('.map__pin--main');
 // Pin variables
-var PIN_HALF_WIDTH = 32;
-var PIN_HEIGHT = 86;
-var UNACTIVE_MAIN_PIN_WIDTH = 100;
-var UNACTIVE_MAIN_PIN_HEIGHT = 100;
-var ACTIVE_MAIN_PIN_WIDTH = 32;
-var ACTIVE_MAIN_PIN_HEIGHT = 87;
+
 var pinTemplate = document.querySelector('template')
     .content.querySelector('button.map__pin');
 
@@ -95,8 +95,8 @@ var createOffers = function () {
 // create pin
 var createPin = function (ad) {
   var pin = pinTemplate.cloneNode(true);
-  pin.style.left = ad.location.x - PIN_HALF_WIDTH + 'px';
-  pin.style.top = ad.location.y - PIN_HEIGHT + 'px';
+  pin.style.left = ad.location.x + (PIN_WIDTH / 2) + 'px';
+  pin.style.top = ad.location.y + PIN_HEIGHT + 'px';
   pin.querySelector('img').src = ad.author.avatar;
   pin.querySelector('img').alt = ad.offer.title;
   return pin;
@@ -189,21 +189,22 @@ var toggleForm = function (tagName, hide) {
     formFields[i].disabled = hide;
   }
 };
+
 toggleForm('fieldset', true);
-var fillFormValue = function (pinWidth, pinHeight) {
-  var x = parseInt(mainMapPin.style.left, 10) - pinWidth;
-  var y = parseInt(mainMapPin.style.top, 10) - pinHeight;
+var fillFormAddressValue = function (pinWidth, pinHeight) {
+  var x = parseInt(mainMapPin.style.left, 10) + pinWidth / 2;
+  var y = parseInt(mainMapPin.style.top, 10) + pinHeight;
   var value = x + ', ' + y;
   document.forms[1].address.value = value;
 };
-fillFormValue(UNACTIVE_MAIN_PIN_WIDTH, UNACTIVE_MAIN_PIN_HEIGHT);
+fillFormAddressValue(MAIN_PIN_WIDTH, MAIN_PIN_HALF_HEIGHT);
 
 
 var activatePage = function () {
   mapBlock.classList.remove('map--faded'); //  Removed map faded
   adForm.classList.remove('ad-form--disabled'); // Remove blur from form
   toggleForm('fieldset', false); // Activate form
-  fillFormValue(ACTIVE_MAIN_PIN_WIDTH, ACTIVE_MAIN_PIN_HEIGHT);
+  fillFormAddressValue(MAIN_PIN_WIDTH, ACTIVE_MAIN_PIN_HEIGHT);
 };
 
 mainMapPin.addEventListener('mouseup', function onMainPinDrag() {
