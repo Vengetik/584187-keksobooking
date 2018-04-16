@@ -211,3 +211,53 @@ mainMapPin.addEventListener('mouseup', function onMainPinDrag() {
   activatePage();
   mainMapPin.removeEventListener('mouseup', onMainPinDrag);
 });
+
+var formTypeField = document.forms[1].type;
+var formPriceField = document.forms[1].price;
+var formTimeIn = document.forms[1].timein;
+var formTimeOut = document.forms[1].timeout;
+var formRooms = document.forms[1].rooms;
+var formCapacity = document.forms[1].capacity;
+
+formTypeField.addEventListener('change', function () {
+  if (formTypeField.value === 'bungalo') {
+    formPriceField.setAttribute('min', 0);
+    formPriceField.setAttribute('placeholder', 0);
+  } else if (formTypeField.value === 'flat') {
+    formPriceField.setAttribute('min', 1000);
+    formPriceField.setAttribute('placeholder', 1000);
+  } else if (formTypeField.value === 'house') {
+    formPriceField.setAttribute('min', 5000);
+    formPriceField.setAttribute('placeholder', 5000);
+  } else if (formTypeField.value === 'palace') {
+    formPriceField.setAttribute('min', 10000);
+    formPriceField.setAttribute('placeholder', 10000);
+  }
+});
+var onTermOfStayChange = function (field1, field2) {
+  field1.addEventListener('change', function () {
+    for (var i = 0; i < field1.options.length; i++) {
+      if (field1.options[i].selected) {
+        field2.options[i].selected = true;
+      }
+    }
+  });
+};
+onTermOfStayChange(formTimeIn, formTimeOut);
+onTermOfStayChange(formTimeOut, formTimeIn);
+
+var onRoomOrGuestQuantityChange = function () {
+  var roomNumber = parseInt(formRooms.value, 10);
+  var guestNumber = parseInt(formCapacity.value, 10);
+  if (roomNumber < guestNumber) {
+    formCapacity.setCustomValidity('Количество комнат не соответствует числу гостей');
+  } else if (roomNumber === 100 & guestNumber !== 0) {
+    formCapacity.setCustomValidity('Так много комнат не для гостей');
+  } else {
+    formCapacity.setCustomValidity('');
+  }
+};
+formRooms.addEventListener('change', onRoomOrGuestQuantityChange);
+
+formCapacity.addEventListener('change', onRoomOrGuestQuantityChange);
+
