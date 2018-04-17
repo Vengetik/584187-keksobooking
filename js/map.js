@@ -1,4 +1,9 @@
 'use strict';
+var MAIN_PIN_WIDTH = 65;
+var MAIN_PIN_HEIGHT = 65;
+var MAIN_PIN_TAIL = 18;
+var PIN_HEIGHT = 70;
+var PIN_WIDTH = 50;
 // offer variables
 var avatar = [1, 2, 3, 4, 5, 6, 7, 8];
 var renderTitle = [
@@ -33,12 +38,7 @@ var adForm = document.querySelector('.ad-form');
 var mapPins = document.querySelector('.map__pins');
 var mainMapPin = document.querySelector('.map__pin--main');
 // Pin variables
-var PIN_HALF_WIDTH = 32;
-var PIN_HEIGHT = 86;
-var UNACTIVE_MAIN_PIN_WIDTH = 100;
-var UNACTIVE_MAIN_PIN_HEIGHT = 100;
-var ACTIVE_MAIN_PIN_WIDTH = 32;
-var ACTIVE_MAIN_PIN_HEIGHT = 87;
+
 var pinTemplate = document.querySelector('template')
     .content.querySelector('button.map__pin');
 
@@ -95,8 +95,8 @@ var createOffers = function () {
 // create pin
 var createPin = function (ad) {
   var pin = pinTemplate.cloneNode(true);
-  pin.style.left = ad.location.x - PIN_HALF_WIDTH + 'px';
-  pin.style.top = ad.location.y - PIN_HEIGHT + 'px';
+  pin.style.left = ad.location.x + (PIN_WIDTH / 2) + 'px';
+  pin.style.top = ad.location.y + PIN_HEIGHT + 'px';
   pin.querySelector('img').src = ad.author.avatar;
   pin.querySelector('img').alt = ad.offer.title;
   return pin;
@@ -189,21 +189,27 @@ var toggleForm = function (tagName, hide) {
     formFields[i].disabled = hide;
   }
 };
+
 toggleForm('fieldset', true);
-var fillFormValue = function (pinWidth, pinHeight) {
-  var x = parseInt(mainMapPin.style.left, 10) - pinWidth;
-  var y = parseInt(mainMapPin.style.top, 10) - pinHeight;
+
+var isMapActive = function () {
+  return mapBlock.classList.contains('map--faded');
+}
+
+var fillFormAddressValue = function () {
+  var x = parseInt(mainMapPin.style.left, 10) + MAIN_PIN_WIDTH / 2;
+  var y = isMapActive() ? parseInt(mainMapPin.style.top, 10) + MAIN_PIN_HEIGHT + MAIN_PIN_TAIL :
+    parseInt(mainMapPin.style.top, 10) + MAIN_PIN_HEIGHT / 2;
   var value = x + ', ' + y;
   document.forms[1].address.value = value;
 };
-fillFormValue(UNACTIVE_MAIN_PIN_WIDTH, UNACTIVE_MAIN_PIN_HEIGHT);
-
+fillFormAddressValue();
 
 var activatePage = function () {
   mapBlock.classList.remove('map--faded'); //  Removed map faded
   adForm.classList.remove('ad-form--disabled'); // Remove blur from form
   toggleForm('fieldset', false); // Activate form
-  fillFormValue(ACTIVE_MAIN_PIN_WIDTH, ACTIVE_MAIN_PIN_HEIGHT);
+  fillFormAddressValue();
 };
 
 mainMapPin.addEventListener('mouseup', function onMainPinDrag() {
@@ -211,3 +217,53 @@ mainMapPin.addEventListener('mouseup', function onMainPinDrag() {
   activatePage();
   mainMapPin.removeEventListener('mouseup', onMainPinDrag);
 });
+
+var formTypeField = document.forms[1].type;
+var formPriceField = document.forms[1].price;
+var formTimeIn = document.forms[1].timein;
+var formTimeOut = document.forms[1].timeout;
+var formRooms = document.forms[1].rooms;
+var formCapacity = document.forms[1].capacity;
+
+formTypeField.addEventListener('change', function () {
+  if (formTypeField.value === 'bungalo') {
+    formPriceField.setAttribute('min', 0);
+    formPriceField.setAttribute('placeholder', 0);
+  } else if (formTypeField.value === 'flat') {
+    formPriceField.setAttribute('min', 1000);
+    formPriceField.setAttribute('placeholder', 1000);
+  } else if (formTypeField.value === 'house') {
+    formPriceField.setAttribute('min', 5000);
+    formPriceField.setAttribute('placeholder', 5000);
+  } else if (formTypeField.value === 'palace') {
+    formPriceField.setAttribute('min', 10000);
+    formPriceField.setAttribute('placeholder', 10000);
+  }
+});
+var onTermOfStayChange = function (field1, field2) {
+  field1.addEventListener('change', function () {
+    for (var i = 0; i < field1.options.length; i++) {
+      if (field1.options[i].selected) {
+        field2.options[i].selected = true;
+      }
+    }
+  });
+};
+onTermOfStayChange(formTimeIn, formTimeOut);
+onTermOfStayChange(formTimeOut, formTimeIn);
+
+var onRoomOrGuestQuantityChange = function () {
+  var roomNumber = parseInt(formRooms.value, 10);
+  var guestNumber = parseInt(formCapacity.value, 10);
+  if (roomNumber < guestNumber) {
+    formCapacity.setCustomValidity('Количество комнат не соответствует числу гостей');
+  } else if (roomNumber === 100 & guestNumber !== 0) {
+    formCapacity.setCustomValidity('Так много комнат не для гостей');
+  } else {
+    formCapacity.setCustomValidity('');
+  }
+};
+formRooms.addEventListener('change', onRoomOrGuestQuantityChange);
+
+formCapacity.addEventListener('change', onRoomOrGuestQuantityChange);
+
