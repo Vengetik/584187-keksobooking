@@ -1,7 +1,7 @@
 'use strict';
 var MAIN_PIN_WIDTH = 65;
-var ACTIVE_MAIN_PIN_HEIGHT = 86;
-var MAIN_PIN_HALF_HEIGHT = 32;
+var MAIN_PIN_HEIGHT = 65;
+var MAIN_PIN_TAIL = 18;
 var PIN_HEIGHT = 70;
 var PIN_WIDTH = 50;
 // offer variables
@@ -191,20 +191,25 @@ var toggleForm = function (tagName, hide) {
 };
 
 toggleForm('fieldset', true);
-var fillFormAddressValue = function (pinWidth, pinHeight) {
-  var x = parseInt(mainMapPin.style.left, 10) + pinWidth / 2;
-  var y = parseInt(mainMapPin.style.top, 10) + pinHeight;
+
+var isMapActive = function () {
+  return mapBlock.classList.contains('map--faded');
+}
+
+var fillFormAddressValue = function () {
+  var x = parseInt(mainMapPin.style.left, 10) + MAIN_PIN_WIDTH / 2;
+  var y = isMapActive() ? parseInt(mainMapPin.style.top, 10) + MAIN_PIN_HEIGHT + MAIN_PIN_TAIL :
+    parseInt(mainMapPin.style.top, 10) + MAIN_PIN_HEIGHT / 2;
   var value = x + ', ' + y;
   document.forms[1].address.value = value;
 };
-fillFormAddressValue(MAIN_PIN_WIDTH, MAIN_PIN_HALF_HEIGHT);
-
+fillFormAddressValue();
 
 var activatePage = function () {
   mapBlock.classList.remove('map--faded'); //  Removed map faded
   adForm.classList.remove('ad-form--disabled'); // Remove blur from form
   toggleForm('fieldset', false); // Activate form
-  fillFormAddressValue(MAIN_PIN_WIDTH, ACTIVE_MAIN_PIN_HEIGHT);
+  fillFormAddressValue();
 };
 
 mainMapPin.addEventListener('mouseup', function onMainPinDrag() {
