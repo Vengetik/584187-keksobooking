@@ -164,7 +164,7 @@ var createCard = function (offerCard) {
 var renderCard = function (cardOffer) {
   var card = createCard(cardOffer);
   var popupCrossElement = card.querySelector('.popup__close');
-
+  document.addEventListener('keydown', onCardEscPress);
   popupCrossElement.addEventListener('click', onCrossClick);
   mapBlock.insertBefore(card, mapBlock.children[3]);
 };
@@ -173,13 +173,18 @@ var renderCard = function (cardOffer) {
 var onCrossClick = function () {
   removeCard();
 };
-
+var onCardEscPress = function (evt) {
+  if (evt.keyCode === 27) {
+    removeCard();
+  }
+};
 // Close card pin listener
 var removeCard = function () {
   var mapCardElement = mapBlock.querySelector('.map__card');
   if (mapCardElement) {
     mapCardElement.remove();
   }
+  document.removeEventListener('keydown', onCardEscPress);
 };
 
 // Disable form elements
