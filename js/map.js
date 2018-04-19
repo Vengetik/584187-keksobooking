@@ -1,4 +1,5 @@
 'use strict';
+// pin const
 var MAIN_PIN_WIDTH = 65;
 var MAIN_PIN_HEIGHT = 65;
 var MAIN_PIN_TAIL = 18;
@@ -101,6 +102,7 @@ var createPin = function (ad) {
   pin.querySelector('img').alt = ad.offer.title;
   return pin;
 };
+// added listener on click for pin
 var setListenerToPin = function (pin, ad) {
   pin.addEventListener('click', function () {
     removeCard();
@@ -164,7 +166,7 @@ var createCard = function (offerCard) {
 var renderCard = function (cardOffer) {
   var card = createCard(cardOffer);
   var popupCrossElement = card.querySelector('.popup__close');
-
+  document.addEventListener('keydown', onCardEscPress);
   popupCrossElement.addEventListener('click', onCrossClick);
   mapBlock.insertBefore(card, mapBlock.children[3]);
 };
@@ -173,13 +175,18 @@ var renderCard = function (cardOffer) {
 var onCrossClick = function () {
   removeCard();
 };
-
+var onCardEscPress = function (evt) {
+  if (evt.keyCode === 27) {
+    removeCard();
+  }
+};
 // Close card pin listener
 var removeCard = function () {
   var mapCardElement = mapBlock.querySelector('.map__card');
   if (mapCardElement) {
     mapCardElement.remove();
   }
+  document.removeEventListener('keydown', onCardEscPress);
 };
 
 // Disable form elements
@@ -194,7 +201,7 @@ toggleForm('fieldset', true);
 
 var isMapActive = function () {
   return mapBlock.classList.contains('map--faded');
-}
+};
 
 var fillFormAddressValue = function () {
   var x = parseInt(mainMapPin.style.left, 10) + MAIN_PIN_WIDTH / 2;
@@ -212,10 +219,10 @@ var activatePage = function () {
   fillFormAddressValue();
 };
 
-mainMapPin.addEventListener('mouseup', function onMainPinDrag() {
+mainMapPin.addEventListener('mouseup', function onMainPinDrop() {
   renderPins(offers);
   activatePage();
-  mainMapPin.removeEventListener('mouseup', onMainPinDrag);
+  mainMapPin.removeEventListener('mouseup', onMainPinDrop);
 });
 
 var formTypeField = document.forms[1].type;
@@ -267,3 +274,34 @@ formRooms.addEventListener('change', onRoomOrGuestQuantityChange);
 
 formCapacity.addEventListener('change', onRoomOrGuestQuantityChange);
 
+mainMapPin.addEventListener('mousedown', function (evt) {
+  evt.preventDefault();
+
+  var starCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
+  var onMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+    var mapOverlay = document.querySelector('.map__overlay');
+
+    var shift = {
+      x: starCoords.x - moveEvt.clientX,
+      y: starCoords.y - moveEvt.clientY
+    };
+    starCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+    mainMapPin.style.top = (mainMapPin.offsetTop - shift.y) + 'px';
+    mainMapPin.style.left = (mainMapPin.offsetLeft - shift.x) + 'px';
+    fillFormAddressValue();
+  };
+  var onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+});
