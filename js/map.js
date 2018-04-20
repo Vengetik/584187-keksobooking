@@ -232,12 +232,12 @@ mainMapPin.addEventListener('mouseup', function onMainPinDrop() {
   mainMapPin.removeEventListener('mouseup', onMainPinDrop);
 });
 
-var formTypeField = document.forms[1].type;
-var formPriceField = document.forms[1].price;
-var formTimeIn = document.forms[1].timein;
-var formTimeOut = document.forms[1].timeout;
-var formRooms = document.forms[1].rooms;
-var formCapacity = document.forms[1].capacity;
+var formTypeField = adForm.elements.type;
+var formPriceField = adForm.elements.price;
+var formTimeIn = adForm.elements.timein;
+var formTimeOut = adForm.elements.timeout;
+var formRooms = adForm.elements.rooms;
+var formCapacity = adForm.elements.capacity;
 
 formTypeField.addEventListener('change', function () {
   if (formTypeField.value === 'bungalo') {
