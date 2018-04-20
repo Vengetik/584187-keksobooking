@@ -212,7 +212,7 @@ var isMapActive = function () {
 
 var fillFormAddressValue = function () {
   var x = parseInt(mainMapPin.style.left, 10) + MAIN_PIN_WIDTH / 2;
-  var y = isMapActive() ? parseInt(mainMapPin.style.top, 10) + MAIN_PIN_HEIGHT / 2: parseInt(mainMapPin.style.top, 10) + MAIN_PIN_HEIGHT + MAIN_PIN_TAIL;
+  var y = isMapActive() ? parseInt(mainMapPin.style.top, 10) + MAIN_PIN_HEIGHT / 2 : parseInt(mainMapPin.style.top, 10) + MAIN_PIN_HEIGHT + MAIN_PIN_TAIL;
 
   var value = x + ', ' + y;
   document.forms[1].address.value = value;
