@@ -5,6 +5,13 @@ var MAIN_PIN_HEIGHT = 65;
 var MAIN_PIN_TAIL = 18;
 var PIN_HEIGHT = 70;
 var PIN_WIDTH = 50;
+// limit of drag field location
+var DRAG_LOCATION = {
+  xMin: 65,
+  xMax: 1200,
+  yMin: 150,
+  yMax: 700
+};
 // offer variables
 var avatar = [1, 2, 3, 4, 5, 6, 7, 8];
 var renderTitle = [
@@ -179,6 +186,7 @@ var onCardEscPress = function (evt) {
   if (evt.keyCode === 27) {
     removeCard();
   }
+  document.removeEventListener('keydown', onCardEscPress);
 };
 // Close card pin listener
 var removeCard = function () {
@@ -186,18 +194,17 @@ var removeCard = function () {
   if (mapCardElement) {
     mapCardElement.remove();
   }
-  document.removeEventListener('keydown', onCardEscPress);
 };
 
 // Disable form elements
-var toggleForm = function (tagName, hide) {
-  var formFields = document.getElementsByTagName(tagName);
+var toggleForm = function (className, hide) {
+  var formFields = document.getElementsByClassName(className);
   for (var i = 0; i < formFields.length; i++) {
     formFields[i].disabled = hide;
   }
 };
 
-toggleForm('fieldset', true);
+toggleForm('ad-form__element', true);
 
 var isMapActive = function () {
   return mapBlock.classList.contains('map--faded');
@@ -205,8 +212,8 @@ var isMapActive = function () {
 
 var fillFormAddressValue = function () {
   var x = parseInt(mainMapPin.style.left, 10) + MAIN_PIN_WIDTH / 2;
-  var y = isMapActive() ? parseInt(mainMapPin.style.top, 10) + MAIN_PIN_HEIGHT + MAIN_PIN_TAIL :
-    parseInt(mainMapPin.style.top, 10) + MAIN_PIN_HEIGHT / 2;
+  var y = isMapActive() ? parseInt(mainMapPin.style.top, 10) + MAIN_PIN_HEIGHT / 2: parseInt(mainMapPin.style.top, 10) + MAIN_PIN_HEIGHT + MAIN_PIN_TAIL;
+
   var value = x + ', ' + y;
   document.forms[1].address.value = value;
 };
@@ -215,7 +222,7 @@ fillFormAddressValue();
 var activatePage = function () {
   mapBlock.classList.remove('map--faded'); //  Removed map faded
   adForm.classList.remove('ad-form--disabled'); // Remove blur from form
-  toggleForm('fieldset', false); // Activate form
+  toggleForm('ad-form__element', false); // Activate form
   fillFormAddressValue();
 };
 
@@ -249,11 +256,7 @@ formTypeField.addEventListener('change', function () {
 });
 var onTermOfStayChange = function (field1, field2) {
   field1.addEventListener('change', function () {
-    for (var i = 0; i < field1.options.length; i++) {
-      if (field1.options[i].selected) {
-        field2.options[i].selected = true;
-      }
-    }
+    field2.value = field1.value;
   });
 };
 onTermOfStayChange(formTimeIn, formTimeOut);
@@ -283,20 +286,25 @@ mainMapPin.addEventListener('mousedown', function (evt) {
   };
   var onMouseMove = function (moveEvt) {
     moveEvt.preventDefault();
-    var mapOverlay = document.querySelector('.map__overlay');
 
     var shift = {
       x: starCoords.x - moveEvt.clientX,
       y: starCoords.y - moveEvt.clientY
     };
-    starCoords = {
-      x: moveEvt.clientX,
-      y: moveEvt.clientY
-    };
-    mainMapPin.style.top = (mainMapPin.offsetTop - shift.y) + 'px';
-    mainMapPin.style.left = (mainMapPin.offsetLeft - shift.x) + 'px';
-    fillFormAddressValue();
+    var newY = mainMapPin.offsetTop - shift.y;
+    var newX = mainMapPin.offsetLeft - shift.x;
+    if (newY >= DRAG_LOCATION.yMin - MAIN_PIN_HEIGHT && newY <= DRAG_LOCATION.yMax - (MAIN_PIN_HEIGHT + MAIN_PIN_TAIL)
+      && newX >= DRAG_LOCATION.xMin - MAIN_PIN_WIDTH && newX <= DRAG_LOCATION.xMax - MAIN_PIN_WIDTH) {
+      starCoords = {
+        x: moveEvt.clientX,
+        y: moveEvt.clientY
+      };
+      mainMapPin.style.top = (mainMapPin.offsetTop - shift.y) + 'px';
+      mainMapPin.style.left = (mainMapPin.offsetLeft - shift.x) + 'px';
+      fillFormAddressValue();
+    }
   };
+
   var onMouseUp = function (upEvt) {
     upEvt.preventDefault();
     document.removeEventListener('mousemove', onMouseMove);
