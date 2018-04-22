@@ -1,9 +1,17 @@
 'use strict';
+// pin const
 var MAIN_PIN_WIDTH = 65;
 var MAIN_PIN_HEIGHT = 65;
 var MAIN_PIN_TAIL = 18;
 var PIN_HEIGHT = 70;
 var PIN_WIDTH = 50;
+// limit of drag field location
+var DRAG_LOCATION = {
+  xMin: 65,
+  xMax: 1200,
+  yMin: 150,
+  yMax: 700
+};
 // offer variables
 var avatar = [1, 2, 3, 4, 5, 6, 7, 8];
 var renderTitle = [
@@ -101,6 +109,7 @@ var createPin = function (ad) {
   pin.querySelector('img').alt = ad.offer.title;
   return pin;
 };
+// added listener on click for pin
 var setListenerToPin = function (pin, ad) {
   pin.addEventListener('click', function () {
     removeCard();
@@ -164,7 +173,7 @@ var createCard = function (offerCard) {
 var renderCard = function (cardOffer) {
   var card = createCard(cardOffer);
   var popupCrossElement = card.querySelector('.popup__close');
-
+  document.addEventListener('keydown', onCardEscPress);
   popupCrossElement.addEventListener('click', onCrossClick);
   mapBlock.insertBefore(card, mapBlock.children[3]);
 };
@@ -173,7 +182,12 @@ var renderCard = function (cardOffer) {
 var onCrossClick = function () {
   removeCard();
 };
-
+var onCardEscPress = function (evt) {
+  if (evt.keyCode === 27) {
+    removeCard();
+  }
+  document.removeEventListener('keydown', onCardEscPress);
+};
 // Close card pin listener
 var removeCard = function () {
   var mapCardElement = mapBlock.querySelector('.map__card');
@@ -183,23 +197,23 @@ var removeCard = function () {
 };
 
 // Disable form elements
-var toggleForm = function (tagName, hide) {
-  var formFields = document.getElementsByTagName(tagName);
+var toggleForm = function (className, hide) {
+  var formFields = document.getElementsByClassName(className);
   for (var i = 0; i < formFields.length; i++) {
     formFields[i].disabled = hide;
   }
 };
 
-toggleForm('fieldset', true);
+toggleForm('ad-form__element', true);
 
 var isMapActive = function () {
   return mapBlock.classList.contains('map--faded');
-}
+};
 
 var fillFormAddressValue = function () {
   var x = parseInt(mainMapPin.style.left, 10) + MAIN_PIN_WIDTH / 2;
-  var y = isMapActive() ? parseInt(mainMapPin.style.top, 10) + MAIN_PIN_HEIGHT + MAIN_PIN_TAIL :
-    parseInt(mainMapPin.style.top, 10) + MAIN_PIN_HEIGHT / 2;
+  var y = isMapActive() ? parseInt(mainMapPin.style.top, 10) + MAIN_PIN_HEIGHT / 2 : parseInt(mainMapPin.style.top, 10) + MAIN_PIN_HEIGHT + MAIN_PIN_TAIL;
+
   var value = x + ', ' + y;
   document.forms[1].address.value = value;
 };
@@ -208,22 +222,22 @@ fillFormAddressValue();
 var activatePage = function () {
   mapBlock.classList.remove('map--faded'); //  Removed map faded
   adForm.classList.remove('ad-form--disabled'); // Remove blur from form
-  toggleForm('fieldset', false); // Activate form
+  toggleForm('ad-form__element', false); // Activate form
   fillFormAddressValue();
 };
 
-mainMapPin.addEventListener('mouseup', function onMainPinDrag() {
+mainMapPin.addEventListener('mouseup', function onMainPinDrop() {
   renderPins(offers);
   activatePage();
-  mainMapPin.removeEventListener('mouseup', onMainPinDrag);
+  mainMapPin.removeEventListener('mouseup', onMainPinDrop);
 });
 
-var formTypeField = document.forms[1].type;
-var formPriceField = document.forms[1].price;
-var formTimeIn = document.forms[1].timein;
-var formTimeOut = document.forms[1].timeout;
-var formRooms = document.forms[1].rooms;
-var formCapacity = document.forms[1].capacity;
+var formTypeField = adForm.elements.type;
+var formPriceField = adForm.elements.price;
+var formTimeIn = adForm.elements.timein;
+var formTimeOut = adForm.elements.timeout;
+var formRooms = adForm.elements.rooms;
+var formCapacity = adForm.elements.capacity;
 
 formTypeField.addEventListener('change', function () {
   if (formTypeField.value === 'bungalo') {
@@ -242,11 +256,7 @@ formTypeField.addEventListener('change', function () {
 });
 var onTermOfStayChange = function (field1, field2) {
   field1.addEventListener('change', function () {
-    for (var i = 0; i < field1.options.length; i++) {
-      if (field1.options[i].selected) {
-        field2.options[i].selected = true;
-      }
-    }
+    field2.value = field1.value;
   });
 };
 onTermOfStayChange(formTimeIn, formTimeOut);
@@ -267,3 +277,39 @@ formRooms.addEventListener('change', onRoomOrGuestQuantityChange);
 
 formCapacity.addEventListener('change', onRoomOrGuestQuantityChange);
 
+mainMapPin.addEventListener('mousedown', function (evt) {
+  evt.preventDefault();
+
+  var starCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
+  var onMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+
+    var shift = {
+      x: starCoords.x - moveEvt.clientX,
+      y: starCoords.y - moveEvt.clientY
+    };
+    var newY = mainMapPin.offsetTop - shift.y;
+    var newX = mainMapPin.offsetLeft - shift.x;
+    if (newY >= DRAG_LOCATION.yMin - MAIN_PIN_HEIGHT && newY <= DRAG_LOCATION.yMax - (MAIN_PIN_HEIGHT + MAIN_PIN_TAIL)
+      && newX >= DRAG_LOCATION.xMin - MAIN_PIN_WIDTH && newX <= DRAG_LOCATION.xMax - MAIN_PIN_WIDTH) {
+      starCoords = {
+        x: moveEvt.clientX,
+        y: moveEvt.clientY
+      };
+      mainMapPin.style.top = (mainMapPin.offsetTop - shift.y) + 'px';
+      mainMapPin.style.left = (mainMapPin.offsetLeft - shift.x) + 'px';
+      fillFormAddressValue();
+    }
+  };
+
+  var onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+});
