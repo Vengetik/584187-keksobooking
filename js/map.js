@@ -1,6 +1,5 @@
 'use strict';
 (function () {
-
   var fragment = document.createDocumentFragment();
   var mapBlock = document.querySelector('.map');
   var mapPins = document.querySelector('.map__pins');
@@ -52,23 +51,25 @@
   var isMapActive = function () {
     return mapBlock.classList.contains('map--faded');
   };
-  var fillFormAddressValue = function () {
+
+  var getMainPinCoords = function () {
     var x = parseInt(mainMapPin.style.left, 10) + window.util.MAIN_PIN_WIDTH / 2;
     var y = isMapActive() ?
       parseInt(mainMapPin.style.top, 10) +
       window.util.MAIN_PIN_HEIGHT / 2 :
       parseInt(mainMapPin.style.top, 10) +
       window.util.MAIN_PIN_HEIGHT + window.util.MAIN_PIN_TAIL;
-    var value = x + ', ' + y;
-    window.adForm.address.value = value;
+    return {x: x, y: y};
   };
-  fillFormAddressValue();
+  var coord = getMainPinCoords();
+  window.form.fillAddress(coord.x, coord.y);
+
   window.form.toggle('ad-form__element', true);
   var activatePage = function () {
     mapBlock.classList.remove('map--faded'); //  Removed map faded
     window.adForm.classList.remove('ad-form--disabled'); // Remove blur from form
     window.form.toggle('ad-form__element', false); // Activate form
-    fillFormAddressValue();
+    window.form.fillAddress(coord.x, coord.y);
   };
 
   mainMapPin.addEventListener('mouseup', function onMainPinDrop() {
@@ -106,7 +107,7 @@
           (mainMapPin.offsetTop - shift.y) + 'px';
         mainMapPin.style.left =
           (mainMapPin.offsetLeft - shift.x) + 'px';
-        fillFormAddressValue();
+        window.form.fillAddress(coord.x, coord.y);
       }
     };
 

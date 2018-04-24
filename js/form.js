@@ -52,5 +52,8 @@
         formFields[i].disabled = hide;
       }
     },
+    fillAddress: function (x, y) {
+      window.adForm.address.value = x + ', ' + y;
+    }
   };
 })();
