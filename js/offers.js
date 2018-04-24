@@ -27,7 +27,7 @@
     'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
   ];
   window.offers = {
-    createOffers: function () {
+    create: function () {
       var ads = [];
       var shuffledTitile = window.util.shuffleArray(renderTitle);
       for (var i = 0; i < 8; i++) {

@@ -9,16 +9,19 @@
     yMin: 150,
     yMax: 700
   };
-
+  var fragment = document.createDocumentFragment();
+  var mapBlock = document.querySelector('.map');
+  var mapPins = document.querySelector('.map__pins');
+  var mainMapPin = document.querySelector('.map__pin--main');
   // render pin on map
-  var offers = window.offers.createOffers();
+  var offers = window.offers.create();
   var renderPins = function (ad) {
     for (var i = 0; i < ad.length; i++) {
-      var pin = window.pin.createPin(ad[i]);
+      var pin = window.pin.create(ad[i]);
       setListenerToPin(pin, ad[i]);
-      window.domVariables.fragment.appendChild(pin);
+      fragment.appendChild(pin);
     }
-    window.domVariables.mapPins.appendChild(window.domVariables.fragment);
+    mapPins.appendChild(fragment);
   };
 
   // added listener on click for pin
@@ -34,7 +37,7 @@
     var popupCrossElement = card.querySelector('.popup__close');
     document.addEventListener('keydown', onCardEscPress);
     popupCrossElement.addEventListener('click', onCrossClick);
-    window.domVariables.mapBlock.insertBefore(card, window.domVariables.mapBlock.children[3]);
+    mapBlock.insertBefore(card, mapBlock.children[3]);
   };
 
   // Close card cross listener
@@ -49,35 +52,40 @@
   };
   // Close card pin listener
   var removeCard = function () {
-    var mapCardElement = window.domVariables.mapBlock.querySelector('.map__card');
+    var mapCardElement = mapBlock.querySelector('.map__card');
     if (mapCardElement) {
       mapCardElement.remove();
     }
   };
-
-  // Disable form elements
-  var toggleForm = function (className, hide) {
-    var formFields = document.getElementsByClassName(className);
-    for (var i = 0; i < formFields.length; i++) {
-      formFields[i].disabled = hide;
-    }
+  var isMapActive = function () {
+    return mapBlock.classList.contains('map--faded');
   };
-  toggleForm('ad-form__element', true);
-
+  var fillFormAddressValue = function () {
+    var x = parseInt(mainMapPin.style.left, 10) + window.util.MAIN_PIN_WIDTH / 2;
+    var y = isMapActive() ?
+      parseInt(mainMapPin.style.top, 10) +
+      window.util.MAIN_PIN_HEIGHT / 2 :
+      parseInt(mainMapPin.style.top, 10) +
+      window.util.MAIN_PIN_HEIGHT + window.util.MAIN_PIN_TAIL;
+    var value = x + ', ' + y;
+    window.adForm.address.value = value;
+  };
+  fillFormAddressValue();
+  window.form.toggleForm('ad-form__element', true);
   var activatePage = function () {
-    window.domVariables.mapBlock.classList.remove('map--faded'); //  Removed map faded
-    window.domVariables.adForm.classList.remove('ad-form--disabled'); // Remove blur from form
-    toggleForm('ad-form__element', false); // Activate form
-    window.form.fillFormAddressValue();
+    mapBlock.classList.remove('map--faded'); //  Removed map faded
+    window.adForm.classList.remove('ad-form--disabled'); // Remove blur from form
+    window.form.toggleForm('ad-form__element', false); // Activate form
+    fillFormAddressValue();
   };
 
-  window.domVariables.mainMapPin.addEventListener('mouseup', function onMainPinDrop() {
+  mainMapPin.addEventListener('mouseup', function onMainPinDrop() {
     renderPins(offers);
     activatePage();
-    window.domVariables.mainMapPin.removeEventListener('mouseup', onMainPinDrop);
+    mainMapPin.removeEventListener('mouseup', onMainPinDrop);
   });
 
-  window.domVariables.mainMapPin.addEventListener('mousedown', function (evt) {
+  mainMapPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 
     var starCoords = {
@@ -91,22 +99,22 @@
         x: starCoords.x - moveEvt.clientX,
         y: starCoords.y - moveEvt.clientY
       };
-      var newY = window.domVariables.mainMapPin.offsetTop - shift.y;
-      var newX = window.domVariables.mainMapPin.offsetLeft - shift.x;
+      var newY = mainMapPin.offsetTop - shift.y;
+      var newX = mainMapPin.offsetLeft - shift.x;
       if (
-        newY >= DRAG_LOCATION.yMin - window.pin.MAIN_PIN_HEIGHT &&
-        newY <= DRAG_LOCATION.yMax - (window.pin.MAIN_PIN_HEIGHT + window.pin.MAIN_PIN_TAIL) &&
-        newX >= DRAG_LOCATION.xMin - window.pin.MAIN_PIN_WIDTH &&
-        newX <= DRAG_LOCATION.xMax - window.pin.MAIN_PIN_WIDTH) {
+        newY >= DRAG_LOCATION.yMin - window.util.MAIN_PIN_HEIGHT &&
+        newY <= DRAG_LOCATION.yMax - (window.util.MAIN_PIN_HEIGHT + window.util.MAIN_PIN_TAIL) &&
+        newX >= DRAG_LOCATION.xMin - window.util.MAIN_PIN_WIDTH &&
+        newX <= DRAG_LOCATION.xMax - window.util.MAIN_PIN_WIDTH) {
         starCoords = {
           x: moveEvt.clientX,
           y: moveEvt.clientY
         };
-        window.domVariables.mainMapPin.style.top =
-          (window.domVariables.mainMapPin.offsetTop - shift.y) + 'px';
-        window.domVariables.mainMapPin.style.left =
-          (window.domVariables.mainMapPin.offsetLeft - shift.x) + 'px';
-        window.form.fillFormAddressValue();
+        mainMapPin.style.top =
+          (mainMapPin.offsetTop - shift.y) + 'px';
+        mainMapPin.style.left =
+          (mainMapPin.offsetLeft - shift.x) + 'px';
+        fillFormAddressValue();
       }
     };
 

@@ -1,11 +1,12 @@
 'use strict';
 (function () {
-  var formTypeField = window.domVariables.adForm.elements.type;
-  var formPriceField = window.domVariables.adForm.elements.price;
-  var formTimeIn = window.domVariables.adForm.elements.timein;
-  var formTimeOut = window.domVariables.adForm.elements.timeout;
-  var formRooms = window.domVariables.adForm.elements.rooms;
-  var formCapacity = window.domVariables.adForm.elements.capacity;
+  window.adForm = document.querySelector('.ad-form');
+  var formTypeField = window.adForm.elements.type;
+  var formPriceField = window.adForm.elements.price;
+  var formTimeIn = window.adForm.elements.timein;
+  var formTimeOut = window.adForm.elements.timeout;
+  var formRooms = window.adForm.elements.rooms;
+  var formCapacity = window.adForm.elements.capacity;
 
   var onTermOfStayChange = function (field1, field2) {
     field1.addEventListener('change', function () {
@@ -44,19 +45,12 @@
   });
   formRooms.addEventListener('change', onRoomOrGuestQuantityChange);
   formCapacity.addEventListener('change', onRoomOrGuestQuantityChange);
-
   window.form = {
-    fillFormAddressValue: function () {
-      var x = parseInt(window.domVariables.mainMapPin.style.left, 10) + window.pin.MAIN_PIN_WIDTH / 2;
-      var y = window.util.isMapActive() ?
-        parseInt(window.domVariables.mainMapPin.style.top, 10) +
-        window.pin.MAIN_PIN_HEIGHT / 2 :
-        parseInt(window.domVariables.mainMapPin.style.top, 10) +
-        window.pin.MAIN_PIN_HEIGHT + window.pin.MAIN_PIN_TAIL;
-
-      var value = x + ', ' + y;
-      window.domVariables.adForm.address.value = value;
-    }
+    toggleForm: function (className, hide) {
+      var formFields = document.getElementsByClassName(className);
+      for (var i = 0; i < formFields.length; i++) {
+        formFields[i].disabled = hide;
+      }
+    },
   };
-  window.form.fillFormAddressValue();
 })();
