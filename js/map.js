@@ -33,7 +33,7 @@
   };
 
   var renderCard = function (cardOffer) {
-    var card = window.card.createCard(cardOffer);
+    var card = window.card.create(cardOffer);
     var popupCrossElement = card.querySelector('.popup__close');
     document.addEventListener('keydown', onCardEscPress);
     popupCrossElement.addEventListener('click', onCrossClick);

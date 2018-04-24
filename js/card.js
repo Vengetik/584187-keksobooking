@@ -4,7 +4,7 @@
       .content.querySelector('article.map__card');
 
   window.card = {
-    createCard: function (cardOffer) {
+    create: function (cardOffer) {
       var card = cardTemplate.cloneNode(true);
       var russianType;
       var featuresList = card.querySelector('.popup__features');
