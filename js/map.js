@@ -59,19 +59,19 @@
       window.util.MAIN_PIN_HEIGHT / 2 :
       parseInt(mainMapPin.style.top, 10) +
       window.util.MAIN_PIN_HEIGHT + window.util.MAIN_PIN_TAIL;
-    return {x: x, y: y};
+    return {
+      x: x,
+      y: y
+    };
   };
   var coord = getMainPinCoords();
   window.form.fillAddress(coord.x, coord.y);
-
-  window.form.toggle('ad-form__element', true);
+  window.form.toggle();
   var activatePage = function () {
     mapBlock.classList.remove('map--faded'); //  Removed map faded
-    window.adForm.classList.remove('ad-form--disabled'); // Remove blur from form
-    window.form.toggle('ad-form__element', false); // Activate form
+    window.form.toggle(); // Activate form
     window.form.fillAddress(coord.x, coord.y);
   };
-
   mainMapPin.addEventListener('mouseup', function onMainPinDrop() {
     renderPins(offers);
     activatePage();

@@ -1,12 +1,12 @@
 'use strict';
 (function () {
-  window.adForm = document.querySelector('.ad-form');
-  var formTypeField = window.adForm.elements.type;
-  var formPriceField = window.adForm.elements.price;
-  var formTimeIn = window.adForm.elements.timein;
-  var formTimeOut = window.adForm.elements.timeout;
-  var formRooms = window.adForm.elements.rooms;
-  var formCapacity = window.adForm.elements.capacity;
+  var adForm = document.querySelector('.ad-form');
+  var formTypeField = adForm.elements.type;
+  var formPriceField = adForm.elements.price;
+  var formTimeIn = adForm.elements.timein;
+  var formTimeOut = adForm.elements.timeout;
+  var formRooms = adForm.elements.rooms;
+  var formCapacity = adForm.elements.capacity;
 
   var onTermOfStayChange = function (field1, field2) {
     field1.addEventListener('change', function () {
@@ -45,15 +45,25 @@
   });
   formRooms.addEventListener('change', onRoomOrGuestQuantityChange);
   formCapacity.addEventListener('change', onRoomOrGuestQuantityChange);
+  function isFormDisabled() {
+    return adForm.classList.contains('ad-form--disabled');
+  }
   window.form = {
-    toggle: function (className, hide) {
-      var formFields = document.getElementsByClassName(className);
-      for (var i = 0; i < formFields.length; i++) {
-        formFields[i].disabled = hide;
+    toggle: function () {
+      var isDisabled = isFormDisabled();
+      if (isDisabled) {
+        adForm.classList.remove('ad-form--disabled');
+      } else {
+        adForm.classList.add('ad-form--disabled');
+      }
+      var formField = document.querySelectorAll('.ad-form__element');
+      for (var i = 0; i < formField.length; i++) {
+        formField[i].disabled = isDisabled;
       }
     },
     fillAddress: function (x, y) {
-      window.adForm.address.value = x + ', ' + y;
+      console.log(x, y);
+      adForm.address.value = x + ', ' + y;
     }
   };
 })();
