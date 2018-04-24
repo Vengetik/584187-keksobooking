@@ -1,14 +1,6 @@
 'use strict';
 (function () {
-  var ESC_BUTTON = 27;
 
-  // limit of drag field location
-  var DRAG_LOCATION = {
-    xMin: 65,
-    xMax: 1200,
-    yMin: 150,
-    yMax: 700
-  };
   var fragment = document.createDocumentFragment();
   var mapBlock = document.querySelector('.map');
   var mapPins = document.querySelector('.map__pins');
@@ -45,7 +37,7 @@
     removeCard();
   };
   var onCardEscPress = function (evt) {
-    if (evt.keyCode === ESC_BUTTON) {
+    if (evt.keyCode === window.util.ESC_BUTTON) {
       removeCard();
     }
     document.removeEventListener('keydown', onCardEscPress);
@@ -71,11 +63,11 @@
     window.adForm.address.value = value;
   };
   fillFormAddressValue();
-  window.form.toggleForm('ad-form__element', true);
+  window.form.toggle('ad-form__element', true);
   var activatePage = function () {
     mapBlock.classList.remove('map--faded'); //  Removed map faded
     window.adForm.classList.remove('ad-form--disabled'); // Remove blur from form
-    window.form.toggleForm('ad-form__element', false); // Activate form
+    window.form.toggle('ad-form__element', false); // Activate form
     fillFormAddressValue();
   };
 
@@ -102,10 +94,10 @@
       var newY = mainMapPin.offsetTop - shift.y;
       var newX = mainMapPin.offsetLeft - shift.x;
       if (
-        newY >= DRAG_LOCATION.yMin - window.util.MAIN_PIN_HEIGHT &&
-        newY <= DRAG_LOCATION.yMax - (window.util.MAIN_PIN_HEIGHT + window.util.MAIN_PIN_TAIL) &&
-        newX >= DRAG_LOCATION.xMin - window.util.MAIN_PIN_WIDTH &&
-        newX <= DRAG_LOCATION.xMax - window.util.MAIN_PIN_WIDTH) {
+        newY >= window.util.DRAG_LOCATION.yMin - window.util.MAIN_PIN_HEIGHT &&
+        newY <= window.util.DRAG_LOCATION.yMax - (window.util.MAIN_PIN_HEIGHT + window.util.MAIN_PIN_TAIL) &&
+        newX >= window.util.DRAG_LOCATION.xMin - window.util.MAIN_PIN_WIDTH &&
+        newX <= window.util.DRAG_LOCATION.xMax - window.util.MAIN_PIN_WIDTH) {
         starCoords = {
           x: moveEvt.clientX,
           y: moveEvt.clientY

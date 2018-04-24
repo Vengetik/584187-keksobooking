@@ -5,6 +5,13 @@
     MAIN_PIN_WIDTH: 65,
     MAIN_PIN_HEIGHT: 65,
     MAIN_PIN_TAIL: 18,
+    ESC_BUTTON: 27,
+    DRAG_LOCATION: {
+      xMin: 65,
+      xMax: 1200,
+      yMin: 150,
+      yMax: 700
+    },
 
     shuffleArray: function (someArray) {
       return someArray.sort(function () {
