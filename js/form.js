@@ -46,7 +46,7 @@
   formRooms.addEventListener('change', onRoomOrGuestQuantityChange);
   formCapacity.addEventListener('change', onRoomOrGuestQuantityChange);
   window.form = {
-    toggleForm: function (className, hide) {
+    toggle: function (className, hide) {
       var formFields = document.getElementsByClassName(className);
       for (var i = 0; i < formFields.length; i++) {
         formFields[i].disabled = hide;
