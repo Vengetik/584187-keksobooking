@@ -64,13 +64,14 @@
       y: y
     };
   };
-  var coord = getMainPinCoords();
-  window.form.fillAddress(coord.x, coord.y);
+  var coords = getMainPinCoords();
+  window.form.fillAddress(coords.x, coords.y);
   window.form.toggle();
   var activatePage = function () {
     mapBlock.classList.remove('map--faded'); //  Removed map faded
-    window.form.toggle(); // Activate form
-    window.form.fillAddress(coord.x, coord.y);
+    window.form.toggle();
+    var activeCoords = getMainPinCoords();
+    window.form.fillAddress(activeCoords.x, activeCoords.y);
   };
   mainMapPin.addEventListener('mouseup', function onMainPinDrop() {
     renderPins(offers);
@@ -87,7 +88,7 @@
     };
     var onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
-
+      var moveCoords = getMainPinCoords();
       var shift = {
         x: starCoords.x - moveEvt.clientX,
         y: starCoords.y - moveEvt.clientY
@@ -107,7 +108,7 @@
           (mainMapPin.offsetTop - shift.y) + 'px';
         mainMapPin.style.left =
           (mainMapPin.offsetLeft - shift.x) + 'px';
-        window.form.fillAddress(coord.x, coord.y);
+        window.form.fillAddress(moveCoords.x, moveCoords.y);
       }
     };
 

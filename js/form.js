@@ -58,11 +58,10 @@
       }
       var formField = document.querySelectorAll('.ad-form__element');
       for (var i = 0; i < formField.length; i++) {
-        formField[i].disabled = isDisabled;
+        formField[i].disabled = !isDisabled;
       }
     },
     fillAddress: function (x, y) {
-      console.log(x, y);
       adForm.address.value = x + ', ' + y;
     }
   };
