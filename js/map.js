@@ -73,14 +73,14 @@
     var activeCoords = getMainPinCoords();
     window.form.fillAddress(activeCoords.x, activeCoords.y);
   };
-  var onMainPinDropListener = function () {
+  var mainPinDrop = function () {
     mainMapPin.addEventListener('mouseup', function onMainPinDrop() {
       renderPins(offers);
       activatePage();
       mainMapPin.removeEventListener('mouseup', onMainPinDrop);
     });
   };
-  onMainPinDropListener();
+  mainPinDrop();
   mainMapPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 
@@ -132,7 +132,7 @@
     for (var i = 1; i < pins.length; i++) {
       pins[i].remove();
     }
-    onMainPinDropListener();
+    mainPinDrop();
     window.form.fillAddress(coords.x, coords.y);
   };
   var callback = function (evt) {
