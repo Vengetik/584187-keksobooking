@@ -5,7 +5,9 @@
   var mapPins = document.querySelector('.map__pins');
   var mainMapPin = document.querySelector('.map__pin--main');
   // render pin on map
-  var offers = window.offers.create();
+  var onError = function () {
+    return window.messages.error;
+  }
   var renderPins = function (ad) {
     for (var i = 0; i < ad.length; i++) {
       var pin = window.pin.create(ad[i]);
@@ -51,7 +53,10 @@
   var isMapActive = function () {
     return mapBlock.classList.contains('map--faded');
   };
-
+  var getMainPinPrimaryCoords = function () {
+    mainMapPin.style.top = window.util.PIN_MAIN_START_COORDS.y + 'px';
+    mainMapPin.style.left = window.util.PIN_MAIN_START_COORDS.x + 'px';
+  };
   var getMainPinCoords = function () {
     var x = parseInt(mainMapPin.style.left, 10) + window.util.MAIN_PIN_WIDTH / 2;
     var y = isMapActive() ?
@@ -65,8 +70,7 @@
     };
   };
   var coords = getMainPinCoords();
-  window.form.toggle();
-  window.form.fillAddress(coords.x, coords.y);
+
   var activatePage = function () {
     mapBlock.classList.remove('map--faded'); //  Removed map faded
     window.form.toggle();
@@ -75,12 +79,13 @@
   };
   var mainPinDrop = function () {
     mainMapPin.addEventListener('mouseup', function onMainPinDrop() {
-      renderPins(offers);
-      activatePage();
+      window.backend.load(function (data) {
+        renderPins(data);
+        activatePage();
+      }, onError);
       mainMapPin.removeEventListener('mouseup', onMainPinDrop);
     });
   };
-  mainPinDrop();
   mainMapPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 
@@ -123,22 +128,25 @@
     document.addEventListener('mouseup', onMouseUp);
   });
   var onSuccess = function () {
-    window.messages.success();
     mapBlock.classList.add('map--faded');
     window.form.toggle();
-    mainMapPin.style.top = window.util.PIN_MAIN_START_COORDS.y + 'px';
-    mainMapPin.style.left = window.util.PIN_MAIN_START_COORDS.x + 'px';
     var pins = mapPins.querySelectorAll('.map__pin');
     for (var i = 1; i < pins.length; i++) {
       pins[i].remove();
     }
+    .messages.success();
+    getMainPinPrimaryCoords();
+    removeCard();
     mainPinDrop();
     window.form.fillAddress(coords.x, coords.y);
   };
   var callback = function (evt) {
     var form = evt.target;
-    window.backend.upload(new FormData(form), onSuccess(), window.messages.error);
+    window.backend.upload(new FormData(form), onSuccess, onError);
     evt.preventDefault();
   };
+  window.form.toggle();
+  window.form.fillAddress(coords.x, coords.y);
+  mainPinDrop();
   window.form.setSubmitListener(callback);
 })();
