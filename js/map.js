@@ -134,7 +134,7 @@
     for (var i = 1; i < pins.length; i++) {
       pins[i].remove();
     }
-    .messages.success();
+    window.messages.success();
     getMainPinPrimaryCoords();
     removeCard();
     mainPinDrop();
