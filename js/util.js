@@ -13,6 +13,7 @@
       yMax: 700
     },
     URL: 'https://js.dump.academy/keksobooking',
+    URL_DATA: 'https://js.dump.academy/keksobooking/data',
 
     shuffleArray: function (someArray) {
       return someArray.sort(function () {

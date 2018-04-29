@@ -1,32 +1,47 @@
 'use strict';
 (function () {
+  var checkLoad = function (xhr, onLoad, onError) {
+
+    xhr.addEventListener('load', function () {
+      switch (xhr.status) {
+        case 200:
+          onLoad(xhr.response);
+          break;
+
+        default:
+          onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
+      }
+    });
+
+    xhr.addEventListener('error', function () {
+      onError('Произошла ошибка соединения');
+    });
+
+    xhr.addEventListener('timeout', function () {
+      onError('Запрос не успел выполниться за ' + xhr.timeout + ' мс.');
+    });
+    xhr.timeout = 10000;
+  };
+
   window.backend = {
     upload: function (data, onLoad, onError) {
       var xhr = new XMLHttpRequest();
       xhr.responseType = 'json';
 
-      xhr.addEventListener('load', function () {
-        switch (xhr.status) {
-          case 200:
-            onLoad(xhr.response);
-            break;
+      checkLoad(xhr, onLoad, onError);
 
-          default:
-            onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
-        }
-      });
-
-      xhr.addEventListener('error', function () {
-        onError('Произошла ошибка соединения');
-      });
-
-      xhr.addEventListener('timeout', function () {
-        onError('Запрос не успел выполниться за ' + xhr.timeout + ' мс.');
-      });
-      xhr.timeout = 10000;
-
-      xhr.open('POST', URL);
+      xhr.open('POST', window.util.URL);
       xhr.send(data);
+    },
+
+    load: function (onLoad, onError) {
+      var xhr = new XMLHttpRequest();
+      xhr.responseType = 'json';
+
+      checkLoad(xhr, onLoad, onError, 10000);
+
+      xhr.open('GET', window.util.URL_DATA);
+      xhr.send();
     }
   };
 })();
