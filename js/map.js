@@ -7,7 +7,7 @@
   // render pin on map
   var onError = function () {
     return window.messages.error;
-  }
+  };
   var renderPins = function (ad) {
     for (var i = 0; i < ad.length; i++) {
       var pin = window.pin.create(ad[i]);
