@@ -7,7 +7,10 @@
   var formTimeOut = adForm.elements.timeout;
   var formRooms = adForm.elements.rooms;
   var formCapacity = adForm.elements.capacity;
-
+  var successMessage = document.querySelector('.success');
+  function isFormDisabled() {
+    return adForm.classList.contains('ad-form--disabled');
+  }
   var onTermOfStayChange = function (field1, field2) {
     field1.addEventListener('change', function () {
       field2.value = field1.value;
@@ -15,6 +18,19 @@
   };
   onTermOfStayChange(formTimeIn, formTimeOut);
   onTermOfStayChange(formTimeOut, formTimeIn);
+
+  var onError = function (errorMessage) {
+    var errorElement = document.createElement('div');
+
+    errorElement.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: black; color: red;';
+    errorElement.style.position = 'fixed';
+    errorElement.style.left = 0;
+    errorElement.style.right = 0;
+    errorElement.style.fontSize = '30px';
+
+    errorElement.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', errorElement);
+  };
 
   var onRoomOrGuestQuantityChange = function () {
     var roomNumber = parseInt(formRooms.value, 10);
@@ -45,9 +61,14 @@
   });
   formRooms.addEventListener('change', onRoomOrGuestQuantityChange);
   formCapacity.addEventListener('change', onRoomOrGuestQuantityChange);
-  function isFormDisabled() {
-    return adForm.classList.contains('ad-form--disabled');
-  }
+
+  adForm.addEventListener('submit', function (evt) {
+    window.backend.upload(new FormData(adForm), function () {
+      ??????????????????????????????;
+      successMessage.classList.remove('hidden');
+    }, onError);
+    evt.preventDefault();
+  });
   window.form = {
     toggle: function () {
       var isDisabled = isFormDisabled();
