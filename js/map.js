@@ -120,4 +120,11 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
+
+  var callback = function (evt) {
+    var form = evt.target;
+    window.backend.upload(new FormData(form), window.messages.success, window.messages.error);
+    evt.preventDefault();
+  };
+  window.form.setSubmitListener(callback);
 })();
