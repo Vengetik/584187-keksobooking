@@ -5,7 +5,13 @@
     MAIN_PIN_WIDTH: 65,
     MAIN_PIN_HEIGHT: 65,
     MAIN_PIN_TAIL: 18,
+    PIN_MAIN_START_COORDS: {
+      x: 570,
+      y: 375
+    },
     ESC_BUTTON: 27,
+    ENTER_BUTTON: 13,
+    SPACE_BUTTON: 32,
     DRAG_LOCATION: {
       xMin: 65,
       xMax: 1200,
