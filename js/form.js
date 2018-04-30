@@ -67,8 +67,8 @@
     fillAddress: function (x, y) {
       adForm.address.value = x + ', ' + y;
     },
-    setSubmitListener: function (callback) {
-      adForm.addEventListener('submit', callback);
+    setSubmitListener: function (onSubmit) {
+      adForm.addEventListener('submit', onSubmit);
     }
   };
 })();

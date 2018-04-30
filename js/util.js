@@ -2,25 +2,6 @@
 (function () {
   // optimization func
   window.util = {
-    MAIN_PIN_WIDTH: 65,
-    MAIN_PIN_HEIGHT: 65,
-    MAIN_PIN_TAIL: 18,
-    PIN_MAIN_START_COORDS: {
-      x: 570,
-      y: 375
-    },
-    ESC_BUTTON: 27,
-    ENTER_BUTTON: 13,
-    SPACE_BUTTON: 32,
-    DRAG_LOCATION: {
-      xMin: 65,
-      xMax: 1200,
-      yMin: 150,
-      yMax: 700
-    },
-    URL: 'https://js.dump.academy/keksobooking',
-    URL_DATA: 'https://js.dump.academy/keksobooking/data',
-
     shuffleArray: function (someArray) {
       return someArray.sort(function () {
         return Math.random() - 0.5;

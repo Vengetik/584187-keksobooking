@@ -38,7 +38,7 @@
     removeCard();
   };
   var onCardEscPress = function (evt) {
-    if (evt.keyCode === window.util.ESC_BUTTON) {
+    if (evt.keyCode === window.const.Button.ESC) {
       removeCard();
     }
     document.removeEventListener('keydown', onCardEscPress);
@@ -54,16 +54,16 @@
     return mapBlock.classList.contains('map--faded');
   };
   var getMainPinPrimaryCoords = function () {
-    mainMapPin.style.top = window.util.PIN_MAIN_START_COORDS.y + 'px';
-    mainMapPin.style.left = window.util.PIN_MAIN_START_COORDS.x + 'px';
+    mainMapPin.style.top = window.const.MainPinStartCoord.Y + 'px';
+    mainMapPin.style.left = window.const.MainPinStartCoord.X + 'px';
   };
   var getMainPinCoords = function () {
-    var x = parseInt(mainMapPin.style.left, 10) + window.util.MAIN_PIN_WIDTH / 2;
+    var x = parseInt(mainMapPin.style.left, 10) + window.const.MainPin.WIDTH / 2;
     var y = isMapActive() ?
       parseInt(mainMapPin.style.top, 10) +
-      window.util.MAIN_PIN_HEIGHT / 2 :
+      window.const.MainPin.HEIGHT / 2 :
       parseInt(mainMapPin.style.top, 10) +
-      window.util.MAIN_PIN_HEIGHT + window.util.MAIN_PIN_TAIL;
+      window.const.MainPin.HEIGHT + window.const.MainPin.TAIL;
     return {
       x: x,
       y: y
@@ -77,13 +77,13 @@
     var activeCoords = getMainPinCoords();
     window.form.fillAddress(activeCoords.x, activeCoords.y);
   };
-  var mainPinDrop = function () {
-    mainMapPin.addEventListener('mouseup', function onMainPinDrop() {
+  var setMouseUpListener = function () {
+    mainMapPin.addEventListener('mouseup', function onMainPinMouseUp() {
       window.backend.load(function (data) {
         renderPins(data);
         activatePage();
       }, onError);
-      mainMapPin.removeEventListener('mouseup', onMainPinDrop);
+      mainMapPin.removeEventListener('mouseup', onMainPinMouseUp);
     });
   };
   mainMapPin.addEventListener('mousedown', function (evt) {
@@ -103,10 +103,10 @@
       var newY = mainMapPin.offsetTop - shift.y;
       var newX = mainMapPin.offsetLeft - shift.x;
       if (
-        newY >= window.util.DRAG_LOCATION.yMin - window.util.MAIN_PIN_HEIGHT &&
-        newY <= window.util.DRAG_LOCATION.yMax - (window.util.MAIN_PIN_HEIGHT + window.util.MAIN_PIN_TAIL) &&
-        newX >= window.util.DRAG_LOCATION.xMin - window.util.MAIN_PIN_WIDTH &&
-        newX <= window.util.DRAG_LOCATION.xMax - window.util.MAIN_PIN_WIDTH) {
+        newY >= window.const.DragField.Y_MIN - window.const.MainPin.HEIGHT &&
+        newY <= window.const.DragField.Y_MAX - (window.const.MainPin.HEIGHT + window.const.MainPin.TAIL) &&
+        newX >= window.const.DragField.X_MIN - window.const.MainPin.WIDTH &&
+        newX <= window.const.DragField.X_MAX - window.const.MainPin.WIDTH) {
         starCoords = {
           x: moveEvt.clientX,
           y: moveEvt.clientY
@@ -137,16 +137,16 @@
     window.messages.success();
     getMainPinPrimaryCoords();
     removeCard();
-    mainPinDrop();
+    setMouseUpListener();
     window.form.fillAddress(coords.x, coords.y);
   };
-  var callback = function (evt) {
+  var onSubmit = function (evt) {
     var form = evt.target;
     window.backend.upload(new FormData(form), onSuccess, onError);
     evt.preventDefault();
   };
   window.form.toggle();
   window.form.fillAddress(coords.x, coords.y);
-  mainPinDrop();
-  window.form.setSubmitListener(callback);
+  setMouseUpListener();
+  window.form.setSubmitListener(onSubmit);
 })();

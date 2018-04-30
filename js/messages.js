@@ -6,9 +6,9 @@
       successBlock.classList.remove('hidden');
       document.addEventListener('keydown', function (evt) {
         if (
-          evt.keyCode === window.util.ESC_BUTTON ||
-          evt.keyCode === window.util.ENTER_BUTTON ||
-          evt.keyCode === window.util.SPACE_BUTTON
+          evt.keyCode === window.const.Button.ESC ||
+          evt.keyCode === window.const.Button.ENTER ||
+          evt.keyCode === window.const.Button.SPACE
         ) {
           successBlock.classList.add('hidden');
         }
