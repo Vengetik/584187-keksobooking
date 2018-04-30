@@ -8,6 +8,9 @@
   var formRooms = adForm.elements.rooms;
   var formCapacity = adForm.elements.capacity;
 
+  function isFormDisabled() {
+    return adForm.classList.contains('ad-form--disabled');
+  }
   var onTermOfStayChange = function (field1, field2) {
     field1.addEventListener('change', function () {
       field2.value = field1.value;
@@ -45,9 +48,8 @@
   });
   formRooms.addEventListener('change', onRoomOrGuestQuantityChange);
   formCapacity.addEventListener('change', onRoomOrGuestQuantityChange);
-  function isFormDisabled() {
-    return adForm.classList.contains('ad-form--disabled');
-  }
+
+
   window.form = {
     toggle: function () {
       var isDisabled = isFormDisabled();
@@ -55,6 +57,7 @@
         adForm.classList.remove('ad-form--disabled');
       } else {
         adForm.classList.add('ad-form--disabled');
+        adForm.reset();
       }
       var formField = document.querySelectorAll('.ad-form__element');
       for (var i = 0; i < formField.length; i++) {
@@ -63,6 +66,9 @@
     },
     fillAddress: function (x, y) {
       adForm.address.value = x + ', ' + y;
+    },
+    setSubmitListener: function (callback) {
+      adForm.addEventListener('submit', callback);
     }
   };
 })();
