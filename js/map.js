@@ -127,14 +127,16 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
-  var onSuccess = function () {
+  var onSuccessOrReset = function () {
     mapBlock.classList.add('map--faded');
     window.form.toggle();
     var pins = mapPins.querySelectorAll('.map__pin');
     for (var i = 1; i < pins.length; i++) {
       pins[i].remove();
     }
-    window.messages.success();
+    if () { // НЕ СМОГ ПРОДУМАТЬ КАК ПРОВЕРИТЬ ДЛЯ РЕСЕТА ИЛИ ДЛЯ САБМИТА, ЧТО БЫ ЛИШНИЙ ОБРАБОТЧИК НЕ СОЗДАВАТЬ, ЭТО ВСЕ РАВНО НЕ ПОМОГЛО БЫ, ОБРОБОТЧИК ЛОМАЕТСЯ НА ОТПРАВКЕ...
+      window.messages.success();
+    }
     getMainPinPrimaryCoords();
     removeCard();
     setMouseUpListener();
@@ -142,11 +144,12 @@
   };
   var onSubmit = function (evt) {
     var form = evt.target;
-    window.backend.upload(new FormData(form), onSuccess, onError);
+    window.backend.upload(new FormData(form), onSuccessOrReset, onError);
     evt.preventDefault();
   };
   window.form.toggle();
   window.form.fillAddress(coords.x, coords.y);
   setMouseUpListener();
   window.form.setSubmitListener(onSubmit);
+  window.form.setResetListener(onSuccessOrReset);
 })();
