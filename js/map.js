@@ -127,20 +127,22 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
-  var onSuccessOrReset = function () {
-    mapBlock.classList.add('map--faded');
-    window.form.toggle();
+  var removePins = function () {
     var pins = mapPins.querySelectorAll('.map__pin');
     for (var i = 1; i < pins.length; i++) {
       pins[i].remove();
     }
-    if () { // НЕ СМОГ ПРОДУМАТЬ КАК ПРОВЕРИТЬ ДЛЯ РЕСЕТА ИЛИ ДЛЯ САБМИТА, ЧТО БЫ ЛИШНИЙ ОБРАБОТЧИК НЕ СОЗДАВАТЬ, ЭТО ВСЕ РАВНО НЕ ПОМОГЛО БЫ, ОБРОБОТЧИК ЛОМАЕТСЯ НА ОТПРАВКЕ...
-      window.messages.success();
-    }
+  };
+  var onSuccessOrReset = function () {
+    mapBlock.classList.add('map--faded');
+    window.form.toggle();
+    removePins();
+    window.messages.success(); // не додумался как проверить на ресет или сабмит, но это все равно не спасает ситуацию, обработчик ломается на сабмите...
     getMainPinPrimaryCoords();
     removeCard();
     setMouseUpListener();
     window.form.fillAddress(coords.x, coords.y);
+
   };
   var onSubmit = function (evt) {
     var form = evt.target;

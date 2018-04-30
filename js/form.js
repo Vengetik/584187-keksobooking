@@ -74,8 +74,8 @@
     setSubmitListener: function (onSubmit) {
       adForm.addEventListener('submit', onSubmit);
     },
-    setResetListener: function (onSubmit) {
-      adForm.addEventListener('reset', onSubmit);
+    setResetListener: function (onReset) {
+      adForm.addEventListener('reset', onReset);
     }
   };
 })();
