@@ -1,6 +1,6 @@
 'use strict';
 (function () {
-  window.const = {
+  window.constant = {
     Pin: {
       HEIGHT: 70,
       WIDTH: 50,

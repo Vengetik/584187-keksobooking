@@ -6,9 +6,9 @@
       successBlock.classList.remove('hidden');
       document.addEventListener('keydown', function (evt) {
         if (
-          evt.keyCode === window.const.Button.ESC ||
-          evt.keyCode === window.const.Button.ENTER ||
-          evt.keyCode === window.const.Button.SPACE
+          evt.keyCode === window.constant.Button.ESC ||
+          evt.keyCode === window.constant.Button.ENTER ||
+          evt.keyCode === window.constant.Button.SPACE
         ) {
           successBlock.classList.add('hidden');
         }
@@ -30,6 +30,9 @@
 
       errorElement.textContent = errorMessage;
       document.body.insertAdjacentElement('afterbegin', errorElement);
+      setTimeout(function () {
+        errorElement.remove();
+      }, 3000);
     }
   };
 })();

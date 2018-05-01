@@ -1,12 +1,15 @@
 'use strict';
 (function () {
   var adForm = document.querySelector('.ad-form');
-  var formTypeField = adForm.elements.type;
-  var formPriceField = adForm.elements.price;
+  var formType = adForm.elements.type;
+  var formPrice = adForm.elements.price;
   var formTimeIn = adForm.elements.timein;
   var formTimeOut = adForm.elements.timeout;
   var formRooms = adForm.elements.rooms;
   var formCapacity = adForm.elements.capacity;
+  var formReset = document.querySelector('.ad-form__reset');
+  var roomNumber = parseInt(formRooms.value, 10);
+  var guestNumber = parseInt(formCapacity.value, 10);
 
   function isFormDisabled() {
     return adForm.classList.contains('ad-form--disabled');
@@ -16,12 +19,10 @@
       field2.value = field1.value;
     });
   };
-  onTermOfStayChange(formTimeIn, formTimeOut);
-  onTermOfStayChange(formTimeOut, formTimeIn);
 
   var onRoomOrGuestQuantityChange = function () {
-    var roomNumber = parseInt(formRooms.value, 10);
-    var guestNumber = parseInt(formCapacity.value, 10);
+    roomNumber = parseInt(formRooms.value, 10);
+    guestNumber = parseInt(formCapacity.value, 10);
     if (roomNumber < guestNumber) {
       formCapacity.setCustomValidity('Количество комнат не соответствует числу гостей');
     } else if (roomNumber === 100 & guestNumber !== 0) {
@@ -30,29 +31,31 @@
       formCapacity.setCustomValidity('');
     }
   };
-  formTypeField.addEventListener('change', function () {
-    switch (formTypeField.value) {
+  onRoomOrGuestQuantityChange();
+  formRooms.addEventListener('change', onRoomOrGuestQuantityChange);
+  formCapacity.addEventListener('change', onRoomOrGuestQuantityChange);
+  formType.addEventListener('change', function () {
+    switch (formType.value) {
       case 'flat':
-        formPriceField.setAttribute('min', '1000');
-        formPriceField.setAttribute('placeholder', '1000');
+        formPrice.setAttribute('min', '1000');
+        formPrice.setAttribute('placeholder', '1000');
         break;
       case 'bungalo':
-        formPriceField.setAttribute('min', '0');
-        formPriceField.setAttribute('placeholder', '0');
+        formPrice.setAttribute('min', '0');
+        formPrice.setAttribute('placeholder', '0');
         break;
       case 'house':
-        formPriceField.setAttribute('min', '5000');
-        formPriceField.setAttribute('placeholder', '5000');
+        formPrice.setAttribute('min', '5000');
+        formPrice.setAttribute('placeholder', '5000');
         break;
       case 'palace':
-        formPriceField.setAttribute('min', '10000');
-        formPriceField.setAttribute('placeholder', '10000');
+        formPrice.setAttribute('min', '10000');
+        formPrice.setAttribute('placeholder', '10000');
         break;
     }
   });
-  formRooms.addEventListener('change', onRoomOrGuestQuantityChange);
-  formCapacity.addEventListener('change', onRoomOrGuestQuantityChange);
-
+  onTermOfStayChange(formTimeIn, formTimeOut);
+  onTermOfStayChange(formTimeOut, formTimeIn);
 
   window.form = {
     toggle: function () {
@@ -75,7 +78,7 @@
       adForm.addEventListener('submit', onSubmit);
     },
     setResetListener: function (onReset) {
-      adForm.addEventListener('reset', onReset);
+      formReset.addEventListener('click', onReset);
     }
   };
 })();
