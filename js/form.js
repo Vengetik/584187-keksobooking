@@ -1,12 +1,12 @@
 'use strict';
 (function () {
   var adForm = document.querySelector('.ad-form');
-  var formType = adForm.elements.type;
-  var formPrice = adForm.elements.price;
-  var formTimeIn = adForm.elements.timein;
-  var formTimeOut = adForm.elements.timeout;
-  var formRooms = adForm.elements.rooms;
-  var formCapacity = adForm.elements.capacity;
+  var formType = adForm.querySelector('select[name="type"]');
+  var formPrice = adForm.querySelector('input[name="price"]');
+  var formTimeIn = adForm.querySelector('select[name="timein"]');
+  var formTimeOut = adForm.querySelector('select[name="timeout"]');
+  var formRooms = adForm.querySelector('select[name="rooms"]');
+  var formCapacity = adForm.querySelector('select[name="capacity"]');
   var formReset = document.querySelector('.ad-form__reset');
   var roomNumber = parseInt(formRooms.value, 10);
   var guestNumber = parseInt(formCapacity.value, 10);
@@ -31,7 +31,6 @@
       formCapacity.setCustomValidity('');
     }
   };
-  onRoomOrGuestQuantityChange();
   formRooms.addEventListener('change', onRoomOrGuestQuantityChange);
   formCapacity.addEventListener('change', onRoomOrGuestQuantityChange);
   formType.addEventListener('change', function () {
@@ -54,6 +53,7 @@
         break;
     }
   });
+  onRoomOrGuestQuantityChange();
   onTermOfStayChange(formTimeIn, formTimeOut);
   onTermOfStayChange(formTimeOut, formTimeIn);
 
