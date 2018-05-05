@@ -1,39 +1,14 @@
 'use strict';
 (function () {
-  var fragment = document.createDocumentFragment();
   var mapBlock = document.querySelector('.map');
-  var mapPins = document.querySelector('.map__pins');
   var mainMapPin = document.querySelector('.map__pin--main');
+  // var pins = function () {
+  //   window.pin.getAll();
+  // };
   var onError = function (e) {
     window.messages.error(e);
   };
-  // render pin on map
-  var renderPins = function (ad) {
-    for (var i = 0; i < ad.length; i++) {
-      var pin = window.pin.create(ad[i]);
-      setListenerToPin(pin, ad[i]);
-      fragment.appendChild(pin);
-    }
-    mapPins.appendChild(fragment);
-  };
-
-  // added listener on click for pin
-  var setListenerToPin = function (pin, ad) {
-    pin.addEventListener('click', function () {
-      removeCard();
-      renderCard(ad);
-    });
-  };
-
-  var renderCard = function (cardOffer) {
-    var card = window.card.create(cardOffer);
-    var popupCrossElement = card.querySelector('.popup__close');
-    document.addEventListener('keydown', onCardEscPress);
-    popupCrossElement.addEventListener('click', onCrossClick);
-    mapBlock.insertBefore(card, mapBlock.children[3]);
-  };
-
-  // Close card cross listener
+  // Close card on cross and esc listener
   var onCrossClick = function () {
     removeCard();
   };
@@ -43,12 +18,28 @@
     }
     document.removeEventListener('keydown', onCardEscPress);
   };
+  var renderCard = function (cardOffer) {
+    var card = window.card.create(cardOffer);
+    var popupCrossElement = card.querySelector('.popup__close');
+    document.addEventListener('keydown', onCardEscPress);
+    popupCrossElement.addEventListener('click', onCrossClick);
+    mapBlock.insertBefore(card, mapBlock.children[3]);
+  };
   // Close card pin listener
   var removeCard = function () {
     var mapCardElement = mapBlock.querySelector('.map__card');
     if (mapCardElement) {
       mapCardElement.remove();
     }
+  };
+  // added listener on click for pin
+  var setListenerToPin = function (ad) {
+    window.pin.getAll().forEach(function (item) {
+      item.addEventListener('click', function () {
+        removeCard();
+        renderCard(ad);
+      });
+    });
   };
   var isMapActive = function () {
     return mapBlock.classList.contains('map--faded');
@@ -80,7 +71,8 @@
   var setMouseUpListener = function () {
     mainMapPin.addEventListener('mouseup', function onMainPinMouseUp() {
       window.backend.load(function (data) {
-        renderPins(data);
+        window.pin.renderAll(data);
+        setListenerToPin(data);
         activatePage();
       }, onError);
       mainMapPin.removeEventListener('mouseup', onMainPinMouseUp);
@@ -127,16 +119,11 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
-  var removePins = function () {
-    var pins = mapPins.querySelectorAll('.map__pin');
-    for (var i = 1; i < pins.length; i++) {
-      pins[i].remove();
-    }
-  };
+
   var resetPage = function () {
     mapBlock.classList.add('map--faded');
     window.form.toggle();
-    removePins();
+    window.pin.remove();
     getMainPinPrimaryCoords();
     removeCard();
     setMouseUpListener();
