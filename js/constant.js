@@ -38,6 +38,7 @@
       ONE: 1,
       TWO: 2,
       THREE: 3
-    }
+    },
+    RESPONSE_TIMEOUT: 10000
   };
 })();

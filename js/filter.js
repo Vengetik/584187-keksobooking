@@ -79,15 +79,16 @@
         });
         break;
     }
-
-    for (var i = 0; i < propertyFeatures.length; i++) {
-
-      if (propertyFeatures[i].checked) {
-        filteredAds = filteredAds.filter(function (it) {
-          return it.offer.features.indexOf(propertyFeatures[i].value) >= 0;
-        });
+    var filterFeatures = function (feature) {
+      filteredAds = filteredAds.filter(function (it) {
+        return it.offer.features.indexOf(feature.value) >= 0;
+      });
+    };
+    propertyFeatures.forEach(function (feature) {
+      if (feature.checked) {
+        filterFeatures(feature);
       }
-    }
+    });
 
     window.debounce(function () {
       renderPins(filteredAds);

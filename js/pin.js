@@ -26,13 +26,13 @@
     pins = [];
   };
   // render pin on map
-  var renderPins = function (ad, callback) {
-    for (var i = 0; i < ad.length; i++) {
-      var pin = createPin(ad[i]);
+  var renderPins = function (ads, callback) {
+    ads.forEach(function (ad) {
+      var pin = createPin(ad);
       pins.push(pin);
-      setListenerToPin(pin, ad[i], callback);
+      setListenerToPin(pin, ad, callback);
       fragment.appendChild(pin);
-    }
+    });
     mapPins.appendChild(fragment);
   };
 

@@ -9,7 +9,9 @@
   // Close card on cross and esc listener
   var onCrossClick = function () {
     removeCard();
+    document.removeEventListener('keydown', onCardEscPress);
   };
+  // Как это не работает на ESC если ВОТ внизу обработчик???
   var onCardEscPress = function (evt) {
     if (evt.keyCode === window.constant.Button.ESC) {
       removeCard();
