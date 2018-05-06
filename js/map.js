@@ -5,6 +5,8 @@
   // var pins = function () {
   //   window.pin.getAll();
   // };
+  var properties = [];
+
   var onError = function (e) {
     window.messages.error(e);
   };
@@ -70,11 +72,7 @@
   };
   var setMouseUpListener = function () {
     mainMapPin.addEventListener('mouseup', function onMainPinMouseUp() {
-      window.backend.load(function (data) {
-        window.pin.renderAll(data);
-        setListenerToPin(data);
-        activatePage();
-      }, onError);
+      window.backend.load(onSuccessLoad, onError);
       mainMapPin.removeEventListener('mouseup', onMainPinMouseUp);
     });
   };
@@ -129,7 +127,11 @@
     setMouseUpListener();
     window.form.fillAddress(coords.x, coords.y);
   };
-
+  var onSuccessLoad = function (data) {
+    window.filter.listener(data, window.pin.renderAll(data));
+    activatePage();
+    setListenerToPin(data);
+  };
   var onSuccessSubmit = function () {
     resetPage();
     window.messages.success();
@@ -143,6 +145,7 @@
     window.backend.upload(new FormData(form), onSuccessSubmit, onError);
     evt.preventDefault();
   };
+
   window.form.toggle();
   window.form.fillAddress(coords.x, coords.y);
   setMouseUpListener();
