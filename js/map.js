@@ -5,7 +5,6 @@
   // var pins = function () {
   //   window.pin.getAll();
   // };
-  var properties = [];
 
   var onError = function (e) {
     window.messages.error(e);
@@ -128,7 +127,9 @@
     window.form.fillAddress(coords.x, coords.y);
   };
   var onSuccessLoad = function (data) {
-    window.filter.listener(data, window.pin.renderAll(data));
+    var properties = [];
+    properties.push(data);
+    window.filter.listener(properties, window.pin.renderAll(data));
     activatePage();
     setListenerToPin(data);
   };
