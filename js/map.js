@@ -2,9 +2,6 @@
 (function () {
   var mapBlock = document.querySelector('.map');
   var mainMapPin = document.querySelector('.map__pin--main');
-  // var pins = function () {
-  //   window.pin.getAll();
-  // };
 
   var onError = function (e) {
     window.messages.error(e);
@@ -33,15 +30,6 @@
       mapCardElement.remove();
     }
   };
-  // added listener on click for pin
-  var setListenerToPin = function (ad) {
-    window.pin.getAll().forEach(function (item) {
-      item.addEventListener('click', function () {
-        removeCard();
-        renderCard(ad);
-      });
-    });
-  };
   var isMapActive = function () {
     return mapBlock.classList.contains('map--faded');
   };
@@ -69,9 +57,22 @@
     var activeCoords = getMainPinCoords();
     window.form.fillAddress(activeCoords.x, activeCoords.y);
   };
+  var onClickPinCallback = function (ad) {
+    removeCard();
+    renderCard(ad);
+  };
   var setMouseUpListener = function () {
     mainMapPin.addEventListener('mouseup', function onMainPinMouseUp() {
-      window.backend.load(onSuccessLoad, onError);
+      window.backend.load(function (data) {
+        window.filter.setup(data, function (ads) {
+          removeCard();
+          window.pin.removeAll();
+          window.pin.renderAll(ads, onClickPinCallback);
+        });
+
+        window.pin.renderAll(data.slice(0, window.constant.Pin.MAX_NUMBER), onClickPinCallback);
+        activatePage();
+      }, onError);
       mainMapPin.removeEventListener('mouseup', onMainPinMouseUp);
     });
   };
@@ -120,19 +121,14 @@
   var resetPage = function () {
     mapBlock.classList.add('map--faded');
     window.form.toggle();
-    window.pin.remove();
+    window.pin.removeAll();
     getMainPinPrimaryCoords();
     removeCard();
     setMouseUpListener();
     window.form.fillAddress(coords.x, coords.y);
+    window.filter.removeFilters();
   };
-  var onSuccessLoad = function (data) {
-    var properties = [];
-    properties.push(data);
-    window.filter.listener(properties, window.pin.renderAll(data));
-    activatePage();
-    setListenerToPin(data);
-  };
+
   var onSuccessSubmit = function () {
     resetPage();
     window.messages.success();

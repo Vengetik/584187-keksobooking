@@ -5,7 +5,6 @@
   var pinTemplate = document.querySelector('template')
       .content.querySelector('button.map__pin');
   var pins = [];
-  console.log(pins);
   var createPin = function (ad) {
     var pin = pinTemplate.cloneNode(true);
     pin.style.left = ad.location.x + (window.constant.Pin.WIDTH / 2) + 'px';
@@ -15,25 +14,30 @@
     return pin;
   };
 
-  var renderPins = function (ad) {
+  var setListenerToPin = function (pin, ad, callback) {
+    pin.addEventListener('click', function () {
+      callback(ad);
+    });
+  };
+  var removePins = function () {
+    pins.forEach(function (pin) {
+      pin.remove();
+    });
+    pins = [];
+  };
+  // render pin on map
+  var renderPins = function (ad, callback) {
     for (var i = 0; i < ad.length; i++) {
-      var newPin = createPin(ad[i]);
-      pins.push(newPin);
-      fragment.appendChild(newPin);
+      var pin = createPin(ad[i]);
+      pins.push(pin);
+      setListenerToPin(pin, ad[i], callback);
+      fragment.appendChild(pin);
     }
     mapPins.appendChild(fragment);
   };
+
   window.pin = {
-    create: createPin,
     renderAll: renderPins,
-    remove: function () {
-      var smallPins = mapPins.querySelectorAll('.map__pin');
-      for (var i = 1; i < smallPins.length; i++) {
-        smallPins[i].remove();
-      }
-    },
-    getAll: function () {
-      return pins;
-    }
+    removeAll: removePins,
   };
 })();
