@@ -31,9 +31,7 @@
       formCapacity.setCustomValidity('');
     }
   };
-  formRooms.addEventListener('change', onRoomOrGuestQuantityChange);
-  formCapacity.addEventListener('change', onRoomOrGuestQuantityChange);
-  formType.addEventListener('change', function () {
+  var onTypeAndPriceChange = function () {
     switch (formType.value) {
       case 'flat':
         formPrice.setAttribute('min', '1000');
@@ -52,7 +50,11 @@
         formPrice.setAttribute('placeholder', '10000');
         break;
     }
-  });
+  };
+  formRooms.addEventListener('change', onRoomOrGuestQuantityChange);
+  formCapacity.addEventListener('change', onRoomOrGuestQuantityChange);
+  formType.addEventListener('change', onTypeAndPriceChange);
+  onTypeAndPriceChange();
   onRoomOrGuestQuantityChange();
   onTermOfStayChange(formTimeIn, formTimeOut);
   onTermOfStayChange(formTimeOut, formTimeIn);
