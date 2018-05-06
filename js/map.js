@@ -1,47 +1,27 @@
 'use strict';
 (function () {
-  var fragment = document.createDocumentFragment();
   var mapBlock = document.querySelector('.map');
-  var mapPins = document.querySelector('.map__pins');
   var mainMapPin = document.querySelector('.map__pin--main');
-  // render pin on map
-  var onError = function () {
-    return window.messages.error;
-  };
-  var renderPins = function (ad) {
-    for (var i = 0; i < ad.length; i++) {
-      var pin = window.pin.create(ad[i]);
-      setListenerToPin(pin, ad[i]);
-      fragment.appendChild(pin);
-    }
-    mapPins.appendChild(fragment);
-  };
 
-  // added listener on click for pin
-  var setListenerToPin = function (pin, ad) {
-    pin.addEventListener('click', function () {
+  var onError = function (e) {
+    window.messages.error(e);
+  };
+  // Close card on cross and esc listener
+  var onCrossClick = function () {
+    removeCard();
+  };
+  var onCardEscPress = function (evt) {
+    if (evt.keyCode === window.constant.Button.ESC) {
       removeCard();
-      renderCard(ad);
-    });
+    }
+    document.removeEventListener('keydown', onCardEscPress);
   };
-
   var renderCard = function (cardOffer) {
     var card = window.card.create(cardOffer);
     var popupCrossElement = card.querySelector('.popup__close');
     document.addEventListener('keydown', onCardEscPress);
     popupCrossElement.addEventListener('click', onCrossClick);
     mapBlock.insertBefore(card, mapBlock.children[3]);
-  };
-
-  // Close card cross listener
-  var onCrossClick = function () {
-    removeCard();
-  };
-  var onCardEscPress = function (evt) {
-    if (evt.keyCode === window.util.ESC_BUTTON) {
-      removeCard();
-    }
-    document.removeEventListener('keydown', onCardEscPress);
   };
   // Close card pin listener
   var removeCard = function () {
@@ -54,16 +34,16 @@
     return mapBlock.classList.contains('map--faded');
   };
   var getMainPinPrimaryCoords = function () {
-    mainMapPin.style.top = window.util.PIN_MAIN_START_COORDS.y + 'px';
-    mainMapPin.style.left = window.util.PIN_MAIN_START_COORDS.x + 'px';
+    mainMapPin.style.top = window.constant.MainPinStartCoord.Y + 'px';
+    mainMapPin.style.left = window.constant.MainPinStartCoord.X + 'px';
   };
   var getMainPinCoords = function () {
-    var x = parseInt(mainMapPin.style.left, 10) + window.util.MAIN_PIN_WIDTH / 2;
+    var x = parseInt(mainMapPin.style.left, 10) + window.constant.MainPin.WIDTH / 2;
     var y = isMapActive() ?
       parseInt(mainMapPin.style.top, 10) +
-      window.util.MAIN_PIN_HEIGHT / 2 :
+      window.constant.MainPin.HEIGHT / 2 :
       parseInt(mainMapPin.style.top, 10) +
-      window.util.MAIN_PIN_HEIGHT + window.util.MAIN_PIN_TAIL;
+      window.constant.MainPin.HEIGHT + window.constant.MainPin.TAIL;
     return {
       x: x,
       y: y
@@ -77,13 +57,23 @@
     var activeCoords = getMainPinCoords();
     window.form.fillAddress(activeCoords.x, activeCoords.y);
   };
-  var mainPinDrop = function () {
-    mainMapPin.addEventListener('mouseup', function onMainPinDrop() {
+  var onClickPinCallback = function (ad) {
+    removeCard();
+    renderCard(ad);
+  };
+  var setMouseUpListener = function () {
+    mainMapPin.addEventListener('mouseup', function onMainPinMouseUp() {
       window.backend.load(function (data) {
-        renderPins(data);
+        window.filter.setup(data, function (ads) {
+          removeCard();
+          window.pin.removeAll();
+          window.pin.renderAll(ads, onClickPinCallback);
+        });
+
+        window.pin.renderAll(data.slice(0, window.constant.Pin.MAX_NUMBER), onClickPinCallback);
         activatePage();
       }, onError);
-      mainMapPin.removeEventListener('mouseup', onMainPinDrop);
+      mainMapPin.removeEventListener('mouseup', onMainPinMouseUp);
     });
   };
   mainMapPin.addEventListener('mousedown', function (evt) {
@@ -103,10 +93,10 @@
       var newY = mainMapPin.offsetTop - shift.y;
       var newX = mainMapPin.offsetLeft - shift.x;
       if (
-        newY >= window.util.DRAG_LOCATION.yMin - window.util.MAIN_PIN_HEIGHT &&
-        newY <= window.util.DRAG_LOCATION.yMax - (window.util.MAIN_PIN_HEIGHT + window.util.MAIN_PIN_TAIL) &&
-        newX >= window.util.DRAG_LOCATION.xMin - window.util.MAIN_PIN_WIDTH &&
-        newX <= window.util.DRAG_LOCATION.xMax - window.util.MAIN_PIN_WIDTH) {
+        newY >= window.constant.DragField.Y_MIN - window.constant.MainPin.HEIGHT &&
+        newY <= window.constant.DragField.Y_MAX - (window.constant.MainPin.HEIGHT + window.constant.MainPin.TAIL) &&
+        newX >= window.constant.DragField.X_MIN - window.constant.MainPin.WIDTH &&
+        newX <= window.constant.DragField.X_MAX - window.constant.MainPin.WIDTH) {
         starCoords = {
           x: moveEvt.clientX,
           y: moveEvt.clientY
@@ -127,26 +117,35 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
-  var onSuccess = function () {
+
+  var resetPage = function () {
     mapBlock.classList.add('map--faded');
     window.form.toggle();
-    var pins = mapPins.querySelectorAll('.map__pin');
-    for (var i = 1; i < pins.length; i++) {
-      pins[i].remove();
-    }
-    window.messages.success();
+    window.pin.removeAll();
     getMainPinPrimaryCoords();
     removeCard();
-    mainPinDrop();
+    setMouseUpListener();
     window.form.fillAddress(coords.x, coords.y);
+    window.filter.removeFilters();
   };
-  var callback = function (evt) {
+
+  var onSuccessSubmit = function () {
+    resetPage();
+    window.messages.success();
+  };
+  var onReset = function () {
+    resetPage();
+  };
+
+  var onSubmit = function (evt) {
     var form = evt.target;
-    window.backend.upload(new FormData(form), onSuccess, onError);
+    window.backend.upload(new FormData(form), onSuccessSubmit, onError);
     evt.preventDefault();
   };
+
   window.form.toggle();
   window.form.fillAddress(coords.x, coords.y);
-  mainPinDrop();
-  window.form.setSubmitListener(callback);
+  setMouseUpListener();
+  window.form.setSubmitListener(onSubmit);
+  window.form.setResetListener(onReset);
 })();

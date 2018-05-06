@@ -11,14 +11,19 @@
       var cardImgBlock = card.querySelector('.popup__photos');
       var cardImg = card.querySelector('.popup__photo');
       cardImgBlock.removeChild(cardImg);
-      if (cardOffer.offer.type === 'flat') {
-        russianType = 'Квартира';
-      } else if (cardOffer.offer.type === 'bungalo') {
-        russianType = 'Бунгало';
-      } else if (cardOffer.offer.type === 'house') {
-        russianType = 'Дом';
-      } else if (cardOffer.offer.type === 'palace') {
-        russianType = 'Дворец';
+      switch (cardOffer.offer.type) {
+        case 'flat':
+          russianType = 'Квартира';
+          break;
+        case 'bungalo':
+          russianType = 'Бунгало';
+          break;
+        case 'house':
+          russianType = 'Дом';
+          break;
+        case 'palace':
+          russianType = 'Дворец';
+          break;
       }
       card.querySelector('.popup__title').textContent = cardOffer.offer.title;
       card.querySelector('.popup__text--address').textContent = cardOffer.offer.address;

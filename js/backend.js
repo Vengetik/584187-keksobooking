@@ -30,7 +30,7 @@
 
       checkLoad(xhr, onLoad, onError);
 
-      xhr.open('POST', window.util.URL);
+      xhr.open('POST', window.constant.Url.UPLOAD);
       xhr.send(data);
     },
 
@@ -40,7 +40,7 @@
 
       checkLoad(xhr, onLoad, onError, 10000);
 
-      xhr.open('GET', window.util.URL_DATA);
+      xhr.open('GET', window.constant.Url.DATA);
       xhr.send();
     }
   };
