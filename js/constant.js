@@ -1,6 +1,8 @@
 'use strict';
 (function () {
   window.constant = {
+    RESPONSE_TIMEOUT: 10000,
+    XHR_DONE_STATUS: 200,
     Pin: {
       HEIGHT: 70,
       WIDTH: 50,
@@ -39,7 +41,13 @@
       TWO: 2,
       THREE: 3
     },
-    RESPONSE_TIMEOUT: 10000,
-    XHR_DONE_STATUS: 200
+    FILE_TYPES: ['gif', 'jpg', 'jpeg', 'png', 'ico'],
+    Image: {
+      WIDTH: '65',
+      HEIGHT: '60',
+      ALT: 'Фото жилья',
+      MARGIN: '3px',
+    }
+
   };
 })();
