@@ -20,7 +20,7 @@
     xhr.addEventListener('timeout', function () {
       onError('Запрос не успел выполниться за ' + xhr.timeout + ' мс.');
     });
-    xhr.timeout = 10000;
+    xhr.timeout = window.constant.RESPONSE_TIMEOUT;
   };
 
   window.backend = {
@@ -30,7 +30,7 @@
 
       checkLoad(xhr, onLoad, onError);
 
-      xhr.open('POST', window.util.URL);
+      xhr.open('POST', window.constant.Url.UPLOAD);
       xhr.send(data);
     },
 
@@ -38,9 +38,9 @@
       var xhr = new XMLHttpRequest();
       xhr.responseType = 'json';
 
-      checkLoad(xhr, onLoad, onError, 10000);
+      checkLoad(xhr, onLoad, onError, window.constant.RESPONSE_TIMEOUT);
 
-      xhr.open('GET', window.util.URL_DATA);
+      xhr.open('GET', window.constant.Url.DATA);
       xhr.send();
     }
   };
