@@ -46,7 +46,7 @@
         hotelImage.height = '40';
         hotelImage.alt = 'Фотография жилья';
         cardImgBlock.appendChild(hotelImage);
-      })
+      });
       card.querySelector('.popup__avatar').src = cardOffer.author.avatar;
 
       return card;
