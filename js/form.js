@@ -68,10 +68,10 @@
         adForm.classList.add('ad-form--disabled');
         adForm.reset();
       }
-      var formField = document.querySelectorAll('.ad-form__element');
-      for (var i = 0; i < formField.length; i++) {
-        formField[i].disabled = !isDisabled;
-      }
+      var formField = adForm.querySelectorAll('fieldset');
+      formField.forEach(function (field) {
+        field.disabled = !isDisabled;
+      });
     },
     fillAddress: function (x, y) {
       adForm.address.value = x + ', ' + y;

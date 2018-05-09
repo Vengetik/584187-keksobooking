@@ -32,21 +32,21 @@
       card.querySelector('.popup__text--capacity').textContent = cardOffer.offer.rooms + 'комнаты для ' + cardOffer.offer.guests + 'гостей';
       card.querySelector('.popup__text--time').textContent = 'Заезд после ' + cardOffer.offer.checkin + ', выезд до ' + cardOffer.offer.checkout;
       featuresList.innerHTML = '';
-      for (var j = 0; j < cardOffer.offer.features.length; j++) {
+      cardOffer.offer.features.forEach(function (feature) {
         var newElement = document.createElement('li');
-        newElement.classList.add('popup__feature', 'popup__feature--' + cardOffer.offer.features[j]);
+        newElement.classList.add('popup__feature', 'popup__feature--' + feature);
         featuresList.appendChild(newElement);
-      }
+      });
       card.querySelector('.popup__description').textContent = cardOffer.offer.description;
-      for (var i = 0; i < cardOffer.offer.photos.length; i++) {
+      cardOffer.offer.photos.forEach(function (photo) {
         var hotelImage = document.createElement('img');
-        hotelImage.src = cardOffer.offer.photos[i];
+        hotelImage.src = photo;
         hotelImage.classList.add('popup__photo');
         hotelImage.width = '45';
         hotelImage.height = '40';
         hotelImage.alt = 'Фотография жилья';
         cardImgBlock.appendChild(hotelImage);
-      }
+      });
       card.querySelector('.popup__avatar').src = cardOffer.author.avatar;
 
       return card;

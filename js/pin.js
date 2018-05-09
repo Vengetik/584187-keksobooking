@@ -8,7 +8,7 @@
   var createPin = function (ad) {
     var pin = pinTemplate.cloneNode(true);
     pin.style.left = ad.location.x + (window.constant.Pin.WIDTH / 2) + 'px';
-    pin.style.top = ad.location.y + window.constant.Pin.HEIGHT + 'px';
+    pin.style.top = ad.location.y - window.constant.Pin.HEIGHT + 'px';
     pin.querySelector('img').src = ad.author.avatar;
     pin.querySelector('img').alt = ad.offer.title;
     return pin;
@@ -26,13 +26,13 @@
     pins = [];
   };
   // render pin on map
-  var renderPins = function (ad, callback) {
-    for (var i = 0; i < ad.length; i++) {
-      var pin = createPin(ad[i]);
+  var renderPins = function (ads, callback) {
+    ads.forEach(function (ad) {
+      var pin = createPin(ad);
       pins.push(pin);
-      setListenerToPin(pin, ad[i], callback);
+      setListenerToPin(pin, ad, callback);
       fragment.appendChild(pin);
-    }
+    });
     mapPins.appendChild(fragment);
   };
 

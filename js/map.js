@@ -7,21 +7,23 @@
     window.messages.error(e);
   };
   // Close card on cross and esc listener
-  var onCrossClick = function () {
-    removeCard();
-  };
-  var onCardEscPress = function (evt) {
-    if (evt.keyCode === window.constant.Button.ESC) {
-      removeCard();
-    }
-    document.removeEventListener('keydown', onCardEscPress);
-  };
   var renderCard = function (cardOffer) {
     var card = window.card.create(cardOffer);
     var popupCrossElement = card.querySelector('.popup__close');
     document.addEventListener('keydown', onCardEscPress);
     popupCrossElement.addEventListener('click', onCrossClick);
     mapBlock.insertBefore(card, mapBlock.children[3]);
+  };
+  var onCrossClick = function () {
+    removeCard();
+    document.removeEventListener('keydown', onCardEscPress);
+  };
+  var onCardEscPress = function (evt) {
+    if (evt.keyCode === window.constant.Button.ESC) {
+      removeCard();
+      document.removeEventListener('keydown', onCardEscPress);
+    }
+
   };
   // Close card pin listener
   var removeCard = function () {

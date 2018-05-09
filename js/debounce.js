@@ -1,15 +1,14 @@
 'use strict';
 (function () {
-  var DEBOUNCE_INTERVAL = 500;
+  var DEBOUNCE_INTERVAL = 300;
   var lastTimeout;
 
-  var debounce = function (callback) {
+  window.debounce = function (callback) {
     if (lastTimeout) {
       window.clearTimeout(lastTimeout);
     }
     lastTimeout = window.setTimeout(callback, DEBOUNCE_INTERVAL);
   };
-  window.debounce = {
-    debounce: debounce
-  };
+
 })();
+// С дебаунсом поспешил, не открыл код после рефакторинга + забыл в хтмл объявить скрипт гг крч.
