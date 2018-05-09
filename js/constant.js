@@ -39,6 +39,7 @@
       TWO: 2,
       THREE: 3
     },
-    RESPONSE_TIMEOUT: 10000
+    RESPONSE_TIMEOUT: 10000,
+    XHR_DONE_STATUS: 200
   };
 })();

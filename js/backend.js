@@ -4,7 +4,7 @@
 
     xhr.addEventListener('load', function () {
       switch (xhr.status) {
-        case 200:
+        case window.constant.XHR_DONE_STATUS:
           onLoad(xhr.response);
           break;
 
